@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
     <div id="command-console">
@@ -25,6 +25,21 @@
         <button id="init-btn" class="neon-btn">INITIALIZE SYSTEM</button>
         <div id="loader-wrapper" style="display: none;">
             <div id="loader-bar"></div>
+        </div>
+    </div>
+
+    <div id="preview-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2 style="color: #00ff00; margin-top: 0;">Live Macro Preview</h2>
+            
+            <video id="macro-vid" controls autoplay loop playsinline muted>
+                <source src="preview.mp4" type="video/mp4">
+            </video>
+
+            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro Now</a>
+            
+            <img src="macro-ui.png" alt="Macro Hub UI" class="modal-img">
         </div>
     </div>
 
@@ -46,6 +61,7 @@
                 <h2>Efect Macros & Tweaks</h2>
                 <p>Zero-delay system tweaks, high-precision automation, and ultimate latency reduction.</p>
                 <button id="btn-hub" class="neon-btn">Access Hub</button>
+                <button id="btn-preview" class="neon-btn secondary-btn">Watch Preview</button>
             </div>
 
             <div id="secret-fps-card" class="glass-card" style="display: none;" data-tilt data-tilt-glare data-tilt-max-glare="0.2">

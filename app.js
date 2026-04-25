@@ -141,6 +141,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    // --- MODAL LOGIC ---
+    const previewModal = document.getElementById('preview-modal');
+    const btnPreview = document.getElementById('btn-preview');
+    const closeModal = document.getElementById('close-modal');
+    const macroVid = document.getElementById('macro-vid');
+
+    if(btnPreview) {
+        btnPreview.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stop particles
+            sound1.currentTime = 0;
+            sound1.play(); // Play click sound
+            
+            previewModal.style.display = 'flex';
+            // Tiny timeout allows the CSS transition to fade it in
+            setTimeout(() => { previewModal.style.opacity = '1'; }, 10);
+            macroVid.play();
+        });
+    }
+
+    if(closeModal) {
+        closeModal.addEventListener('click', () => {
+            previewModal.style.opacity = '0';
+            setTimeout(() => { 
+                previewModal.style.display = 'none'; 
+                macroVid.pause(); // Stop video when closed
+            }, 300);
+        });
+    }
 
     // --- BUTTON AUDIO & ROUTING ---
     const btnHub = document.getElementById('btn-hub');

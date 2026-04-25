@@ -362,3 +362,75 @@ h1:hover, h1:active {
 #cmd-input::placeholder {
     color: rgba(0, 255, 0, 0.3);
 }
+/* --- MODAL POPUP STYLES --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100000;
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 450px;
+    max-height: 85vh;
+    overflow-y: auto; /* Lets them scroll if the screen is small */
+    position: relative;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid #00ff00;
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.2);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #00ff00;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(0,255,0,0.5);
+}
+
+.close-btn:hover { color: #fff; }
+
+#macro-vid {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    margin-bottom: 1rem;
+    background: #000;
+}
+
+.modal-img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    margin-top: 1rem;
+}
+
+.buy-btn {
+    margin: 1rem 0;
+    background: rgba(0, 255, 0, 0.1);
+    animation: pulseGlow 2s infinite alternate;
+}
+
+/* Secondary Button Style */
+.secondary-btn {
+    margin-top: 10px;
+    border-color: rgba(0, 255, 0, 0.4);
+    color: rgba(0, 255, 0, 0.7);
+}
+
+.secondary-btn:hover {
+    background: rgba(0, 255, 0, 0.2);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
