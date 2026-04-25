@@ -8,7 +8,9 @@ body, html {
     font-family: 'Fira Code', monospace;
     min-height: 100vh;
     overflow-x: hidden;
-    cursor: crosshair; /* Changes cursor to a target sight */
+    cursor: crosshair; 
+    /* Prevents pull-to-refresh when acting as a native app */
+    overscroll-behavior-y: none; 
 }
 
 .background-grid {
@@ -31,6 +33,22 @@ body, html {
 header {
     margin-top: 1rem;
     margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* NEW: Styling for your custom image logo */
+.main-logo {
+    max-width: 280px;
+    height: auto;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 0, 0.4));
+    transition: filter 0.3s ease;
+}
+
+.main-logo:hover {
+    filter: drop-shadow(0 0 25px rgba(0, 255, 0, 0.8));
 }
 
 h1 {
@@ -38,12 +56,11 @@ h1 {
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     min-height: 40px;
     margin: 0;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     display: inline-block;
     transition: all 0.1s;
 }
 
-/* Glitch Effect on Hover/Tap */
 h1:hover, h1:active {
     animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
     color: #fff;
@@ -200,6 +217,8 @@ h1:hover, h1:active {
     width: 100%;
     animation: pulseGlow 3s infinite alternate;
     transition: all 0.3s ease;
+    /* Prevents default double-tap zoom on buttons */
+    touch-action: manipulation; 
 }
 
 .neon-btn:hover {
@@ -237,7 +256,6 @@ h1:hover, h1:active {
     color: #ff3333;
 }
 
-/* Click Particle Physics */
 .particle {
     position: absolute;
     width: 4px;
