@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EFECT Suite | Performance & Utilities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-grid"></div>
+    <div class="container">
+        <header>
+            <h1 id="typewriter" class="glitch-hover"></h1>
+            <p class="subtitle">System Optimization, Macro Engine & Custom Arenas</p>
+            <div id="terminal-log" class="terminal-log"></div>
+        </header>
+        
+        <div class="card-container">
+            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-microchip"></i></div>
+                    <span class="status online"><span class="dot"></span> ONLINE</span>
+                </div>
+                <h2>Efect Macros & Tweaks</h2>
+                <p>Zero-delay system tweaks, high-precision automation, and ultimate latency reduction.</p>
+                <button onclick="window.location.href='https://efectmacrosxtweaks.netlify.app/'" class="neon-btn">Access Hub</button>
+            </div>
+
+            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-gamepad"></i></div>
+                    <span class="status online"><span class="dot"></span> ONLINE</span>
+                </div>
+                <h2>Efect Fortnite Maps</h2>
+                <p>Official custom maps, precision aim trainers, and competitive practice arenas.</p>
+                <button onclick="window.location.href='https://fortnite.gg/creator/efect.lit'" class="neon-btn">View Maps</button>
+            </div>
+
+            <div class="glass-card locked" data-tilt>
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-server"></i></div>
+                    <span class="status dev"><span class="dot"></span> IN DEV</span>
+                </div>
+                <h2>Efect Hardware Monitor</h2>
+                <p>Real-time telemetry and core-locking utility for ultimate system stability.</p>
+                <button class="neon-btn disabled" disabled>Locked</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
