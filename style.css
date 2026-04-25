@@ -1,9 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #050505;
+    color: #fff;
+    font-family: 'Fira Code', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair; 
+    overscroll-behavior-y: none; 
+}
+
 /* --- SPLASH SCREEN STYLES --- */
 #splash-screen {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background-color: #020202; /* Pure black background */
-    z-index: 99999; /* Keeps it above everything else */
+    background-color: #020202; 
+    z-index: 99999; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -36,9 +50,262 @@
     max-width: 250px;
 }
 
-/* Adjust grid for Parallax */
+/* --- MAIN UI STYLES --- */
 .background-grid {
-    /* Made it larger than the screen so it can move */
+    position: fixed;
     top: -5%; left: -5%; width: 110vw; height: 110vh;
-    transition: transform 0.1s ease-out; /* Smooths the gyro jitter */
+    background-image: 
+        linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    transition: transform 0.1s ease-out; 
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+header {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-logo {
+    max-width: 280px;
+    height: auto;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 0, 0.4));
+    transition: filter 0.3s ease;
+}
+
+.main-logo:hover {
+    filter: drop-shadow(0 0 25px rgba(0, 255, 0, 0.8));
+}
+
+h1 {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    min-height: 40px;
+    margin: 0;
+    font-size: 1.5rem;
+    display: inline-block;
+    transition: all 0.1s;
+}
+
+h1:hover, h1:active {
+    animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+    color: #fff;
+    text-shadow: -2px 2px #00ff00, 2px -2px #ff003c;
+}
+
+@keyframes glitch-skew {
+    0% { transform: skew(0deg); }
+    20% { transform: skew(-10deg); }
+    40% { transform: skew(10deg); }
+    60% { transform: skew(-5deg); }
+    80% { transform: skew(5deg); }
+    100% { transform: skew(0deg); }
+}
+
+.subtitle {
+    color: #888;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.terminal-log {
+    font-size: 0.8rem;
+    color: #00ff00;
+    opacity: 0.7;
+    height: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    padding-bottom: 3rem;
+}
+
+.glass-card {
+    background: linear-gradient(145deg, rgba(0,255,0,0.05) 0%, rgba(0,0,0,0) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 290px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: left;
+}
+
+.glass-card:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
+    border: 1px solid rgba(0, 255, 0, 0.6);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.icon-wrapper {
+    font-size: 1.5rem;
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.status {
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+}
+
+.status.online {
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.status.dev {
+    background: rgba(255, 51, 51, 0.1);
+    color: #ff3333;
+    border: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+@keyframes blink {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status.online .dot {
+    background-color: #00ff00;
+    box-shadow: 0 0 5px #00ff00;
+    animation: blink 2s infinite;
+}
+
+.status.dev .dot {
+    background-color: #ff3333;
+    box-shadow: 0 0 5px #ff3333;
+}
+
+.glass-card h2 {
+    color: #fff;
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.glass-card p {
+    color: #a0a0a0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.1); }
+    50% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.4); }
+    100% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.1); }
+}
+
+.neon-btn {
+    display: block;
+    box-sizing: border-box;
+    background: transparent;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    padding: 0.8rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    animation: pulseGlow 3s infinite alternate;
+    transition: all 0.3s ease;
+    touch-action: manipulation; 
+}
+
+.neon-btn:hover {
+    animation: none; 
+    background: #00ff00;
+    color: #000;
+    box-shadow: 0 0 20px #00ff00;
+}
+
+.glass-card.locked {
+    background: linear-gradient(145deg, rgba(255,0,0,0.05) 0%, rgba(0,0,0,0) 100%);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.glass-card.locked:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
+    border: 1px solid rgba(255, 0, 0, 0.5);
+}
+
+.glass-card.locked .icon-wrapper {
+    color: #ff3333;
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+}
+
+.neon-btn.disabled {
+    color: #ff3333;
+    border-color: #ff3333;
+    cursor: not-allowed;
+    animation: none;
+}
+
+.neon-btn.disabled:hover {
+    background: transparent;
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+    color: #ff3333;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #00ff00;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00ff00;
+    pointer-events: none;
+    animation: explode 0.6s ease-out forwards;
+    z-index: 9999;
+}
+
+@keyframes explode {
+    0% { transform: scale(1) translate(0, 0); opacity: 1; }
+    100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
 }
