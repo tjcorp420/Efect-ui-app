@@ -23,7 +23,7 @@ function typeWriter() {
         setTimeout(typeWriter, speed);
     } else {
         startTerminalLog();
-        startTelemetry(); // Start the live ping monitor
+        startTelemetry(); 
     }
 }
 
@@ -46,10 +46,9 @@ function startTelemetry() {
     if (!pingElement) return;
 
     setInterval(() => {
-        // Generates a random number like 0.14 or 0.89 to simulate zero-delay polling
         const fakePing = (Math.random() * 0.8 + 0.1).toFixed(2);
         pingElement.innerText = `Simulated Input: ${fakePing}ms`;
-    }, 120); // Updates extremely fast
+    }, 120); 
 }
 
 // --- EASTER EGG (TAP HEADER 5 TIMES) ---
@@ -60,12 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
         header.addEventListener('click', () => {
             headerClicks++;
             if (headerClicks === 5) {
-                // Change UI to Red "System Override" Mode
                 document.documentElement.style.setProperty('--neon-color', '#ff0000');
                 const allGreenText = document.querySelectorAll('h1, h2, .neon-btn, .icon-wrapper, .terminal-log, #live-ping');
                 allGreenText.forEach(el => el.style.color = '#ff0000');
                 
-                // Change borders and shadows
                 const allCards = document.querySelectorAll('.glass-card');
                 allCards.forEach(card => card.style.borderColor = 'rgba(255, 0, 0, 0.4)');
                 
@@ -75,16 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- BUTTON AUDIO & ROUTING ---
+    // --- BUTTON AUDIO & ROUTING (SOUNDS SWAPPED) ---
     const btnHub = document.getElementById('btn-hub');
     const btnMaps = document.getElementById('btn-maps');
 
     if(btnHub) {
         btnHub.addEventListener('click', (e) => {
-            e.stopPropagation(); // Stops particle explosion over the button
-            sound1.currentTime = 0;
-            sound1.play();
-            // Wait 200ms so sound starts, then open link in new tab
+            e.stopPropagation(); 
+            // Swapped to sound2
+            sound2.currentTime = 0;
+            sound2.play();
             setTimeout(() => { window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'); }, 200);
         });
     }
@@ -92,8 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnMaps) {
         btnMaps.addEventListener('click', (e) => {
             e.stopPropagation();
-            sound2.currentTime = 0;
-            sound2.play();
+            // Swapped to sound1
+            sound1.currentTime = 0;
+            sound1.play();
             setTimeout(() => { window.open('https://fortnite.gg/creator/efect.lit', '_blank'); }, 200);
         });
     }
