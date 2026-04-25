@@ -15,10 +15,12 @@ const sound2 = new Audio('sound2.mp3');
 sound1.volume = 0.6;
 sound2.volume = 0.6;
 
-// --- BOOT SPLASH & GYRO LOGIC ---
+// --- BOOT SPLASH, GYRO & LOADER LOGIC ---
 const initBtn = document.getElementById('init-btn');
 const splashScreen = document.getElementById('splash-screen');
 const splashTerminal = document.getElementById('splash-terminal');
+const loaderWrapper = document.getElementById('loader-wrapper');
+const loaderBar = document.getElementById('loader-bar');
 
 const bootSequenceLogs = [
     "Mounting EFECT file system...",
@@ -32,7 +34,9 @@ const bootSequenceLogs = [
 document.addEventListener('DOMContentLoaded', () => {
     if(initBtn) {
         initBtn.addEventListener('click', async () => {
-            initBtn.style.display = 'none'; // Hide button immediately
+            // Hide button and show the empty loading bar
+            initBtn.style.display = 'none'; 
+            loaderWrapper.style.display = 'block';
             
             // 1. Request iOS Gyro Permission
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -45,11 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Gyro denied", error);
                 }
             } else {
-                // For non-iOS devices
                 window.addEventListener('deviceorientation', handleGyro);
             }
 
-            // 2. Run Fake Terminal Boot Sequence
+            // 2. Run Fake Terminal Boot Sequence & Fill Bar
             let bootIdx = 0;
             splashTerminal.innerHTML = "";
             
@@ -57,22 +60,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (bootIdx < bootSequenceLogs.length) {
                     splashTerminal.innerHTML += `> ${bootSequenceLogs[bootIdx]}<br>`;
                     bootIdx++;
+                    
+                    // Fill the loading bar dynamically
+                    const progress = (bootIdx / bootSequenceLogs.length) * 100;
+                    loaderBar.style.width = `${progress}%`;
+                    
                 } else {
                     clearInterval(bootInterval);
-                    // Fade out splash screen
                     setTimeout(() => {
                         splashScreen.style.opacity = '0';
                         setTimeout(() => {
                             splashScreen.remove();
-                            // Start main app animations
                             typeWriter(); 
                             startTelemetry();
                         }, 500);
                     }, 600);
                 }
-            }, 250); // Speed of the fake boot log
+            }, 350); // Speed of the boot log
         });
     }
+
+    // --- SWIPE DOWN COMMAND CONSOLE LOGIC ---
+    let startY = 0;
+    const consoleUI = document.getElementById('command-console');
+    const cmdInput = document.getElementById('cmd-input');
+
+    // Detect swipe from the top 10% of the screen
+    document.addEventListener('touchstart', e => {
+        startY = e.touches[0].clientY;
+    });
+
+    document.addEventListener('touchend', e => {
+        let endY = e.changedTouches[0].clientY;
+        // If they start near the top and swipe down more than 60px
+        if (startY < 80 && endY > startY + 60) { 
+            consoleUI.style.top = '0'; // Slide console down
+            cmdInput.focus();
+        }
+    });
+
+    // Handle Secret Codes
+    cmdInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            const code = this.value.toLowerCase().trim();
+            
+            if (code === 'unlock_fps') {
+                // Reveal the hidden FPS booster card
+                const secretCard = document.getElementById('secret-fps-card');
+                secretCard.style.display = 'flex';
+                // Slide console back up
+                consoleUI.style.top = '-100px';
+                this.value = '';
+                this.blur();
+                alert("EFECT FPS BOOSTER OVERRIDE ACCEPTED.");
+            } else {
+                // Wrong code, close console
+                consoleUI.style.top = '-100px';
+                this.value = '';
+                this.blur();
+            }
+        }
+    });
 
     // --- EASTER EGG (TAP HEADER 5 TIMES) ---
     let headerClicks = 0;
@@ -82,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headerClicks++;
             if (headerClicks === 5) {
                 document.documentElement.style.setProperty('--neon-color', '#ff0000');
-                const allGreenText = document.querySelectorAll('h1, h2, .neon-btn, .icon-wrapper, .terminal-log, #live-ping');
+                const allGreenText = document.querySelectorAll('h1, h2, .neon-btn:not(#secret-fps-card .neon-btn), .icon-wrapper, .terminal-log, #live-ping');
                 allGreenText.forEach(el => el.style.color = '#ff0000');
                 
                 const allCards = document.querySelectorAll('.glass-card');
@@ -119,9 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- GYROSCOPE PARALLAX PHYSICS ---
 function handleGyro(event) {
-    // event.gamma = left/right tilt, event.beta = front/back tilt
     const x = event.gamma ? event.gamma / 1.5 : 0; 
-    // -45 assumes user holds phone tilted up toward their face
     const y = event.beta ? (event.beta - 45) / 1.5 : 0; 
 
     const grid = document.querySelector('.background-grid');
@@ -165,7 +211,7 @@ function startTelemetry() {
 
 // --- PARTICLE GENERATOR ---
 document.addEventListener('click', function(e) {
-    if (e.target.tagName === 'BUTTON') return;
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
 
     for (let j = 0; j < 8; j++) {
         createParticle(e.pageX, e.pageY);

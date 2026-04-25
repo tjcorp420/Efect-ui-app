@@ -12,13 +12,20 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
+    <div id="command-console">
+        <input type="text" id="cmd-input" placeholder="Enter override code..." autocomplete="off">
+    </div>
+
     <div id="splash-screen">
         <img src="logo.png" alt="EFECT Logo" class="splash-logo">
         <div id="splash-terminal"></div>
         <button id="init-btn" class="neon-btn">INITIALIZE SYSTEM</button>
+        <div id="loader-wrapper" style="display: none;">
+            <div id="loader-bar"></div>
+        </div>
     </div>
 
     <div class="background-grid"></div>
@@ -39,6 +46,16 @@
                 <h2>Efect Macros & Tweaks</h2>
                 <p>Zero-delay system tweaks, high-precision automation, and ultimate latency reduction.</p>
                 <button id="btn-hub" class="neon-btn">Access Hub</button>
+            </div>
+
+            <div id="secret-fps-card" class="glass-card" style="display: none;" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-gauge-high"></i></div>
+                    <span class="status online" style="color: #fff; background: rgba(255,255,255,0.2); border-color: #fff;"><span class="dot" style="background:#fff; box-shadow: 0 0 5px #fff;"></span> OVERCLOCKED</span>
+                </div>
+                <h2 style="color: #fff; text-shadow: 0 0 10px #fff;">Efect FPS Booster</h2>
+                <p style="color: #ccc;">Maximum frame rate unlocked. Background processes terminated. Ready for launch.</p>
+                <button class="neon-btn" style="color: #000; background: #fff; box-shadow: 0 0 20px #fff; border-color: #fff;">Engage</button>
             </div>
 
             <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
