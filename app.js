@@ -3,57 +3,79 @@ let i = 0;
 const speed = 75; 
 
 const systemLogs = [
-    "Bypassing latency... OK",
-    "Optimizing registry... OK",
-    "Loading macro engine... OK",
+    "Bypassing OS latency... OK",
+    "Optimizing system registry... OK",
+    "Loading macro engine hooks... OK",
     "Establishing secure connection... DONE"
 ];
 let logIndex = 0;
 
-// --- AUDIO SETUP ---
 const sound1 = new Audio('sound1.mp3');
 const sound2 = new Audio('sound2.mp3');
 sound1.volume = 0.6;
 sound2.volume = 0.6;
 
-function typeWriter() {
-    if (i < text.length) {
-        document.getElementById("typewriter").innerHTML += text.charAt(i);
-        i++;
-        setTimeout(typeWriter, speed);
-    } else {
-        startTerminalLog();
-        startTelemetry(); 
-    }
-}
+// --- BOOT SPLASH & GYRO LOGIC ---
+const initBtn = document.getElementById('init-btn');
+const splashScreen = document.getElementById('splash-screen');
+const splashTerminal = document.getElementById('splash-terminal');
 
-function startTerminalLog() {
-    const logElement = document.getElementById("terminal-log");
-    if (!logElement) return;
-    
-    logElement.innerText = "> " + systemLogs[0];
-    logIndex++;
+const bootSequenceLogs = [
+    "Mounting EFECT file system...",
+    "Initializing hardware monitor...",
+    "Injecting Efect Pro Macro core...",
+    "Bypassing system latency limits...",
+    "Locking CPU cores...",
+    "SYSTEM READY."
+];
 
-    setInterval(() => {
-        logElement.innerText = "> " + systemLogs[logIndex];
-        logIndex = (logIndex + 1) % systemLogs.length;
-    }, 2000);
-}
-
-// --- FAKE TELEMETRY LOOP ---
-function startTelemetry() {
-    const pingElement = document.getElementById("live-ping");
-    if (!pingElement) return;
-
-    setInterval(() => {
-        const fakePing = (Math.random() * 0.8 + 0.1).toFixed(2);
-        pingElement.innerText = `Simulated Input: ${fakePing}ms`;
-    }, 120); 
-}
-
-// --- EASTER EGG (TAP HEADER 5 TIMES) ---
-let headerClicks = 0;
 document.addEventListener('DOMContentLoaded', () => {
+    if(initBtn) {
+        initBtn.addEventListener('click', async () => {
+            initBtn.style.display = 'none'; // Hide button immediately
+            
+            // 1. Request iOS Gyro Permission
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState === 'granted') {
+                        window.addEventListener('deviceorientation', handleGyro);
+                    }
+                } catch (error) {
+                    console.error("Gyro denied", error);
+                }
+            } else {
+                // For non-iOS devices
+                window.addEventListener('deviceorientation', handleGyro);
+            }
+
+            // 2. Run Fake Terminal Boot Sequence
+            let bootIdx = 0;
+            splashTerminal.innerHTML = "";
+            
+            const bootInterval = setInterval(() => {
+                if (bootIdx < bootSequenceLogs.length) {
+                    splashTerminal.innerHTML += `> ${bootSequenceLogs[bootIdx]}<br>`;
+                    bootIdx++;
+                } else {
+                    clearInterval(bootInterval);
+                    // Fade out splash screen
+                    setTimeout(() => {
+                        splashScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            splashScreen.remove();
+                            // Start main app animations
+                            typeWriter(); 
+                            startTelemetry();
+                        }, 500);
+                    }, 600);
+                }
+            }, 250); // Speed of the fake boot log
+        });
+    }
+
+    // --- EASTER EGG (TAP HEADER 5 TIMES) ---
+    let headerClicks = 0;
     const header = document.getElementById('typewriter');
     if(header) {
         header.addEventListener('click', () => {
@@ -72,14 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- BUTTON AUDIO & ROUTING (SOUNDS SWAPPED) ---
+    // --- BUTTON AUDIO & ROUTING ---
     const btnHub = document.getElementById('btn-hub');
     const btnMaps = document.getElementById('btn-maps');
 
     if(btnHub) {
         btnHub.addEventListener('click', (e) => {
             e.stopPropagation(); 
-            // Swapped to sound2
             sound2.currentTime = 0;
             sound2.play();
             setTimeout(() => { window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'); }, 200);
@@ -89,13 +110,58 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnMaps) {
         btnMaps.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Swapped to sound1
             sound1.currentTime = 0;
             sound1.play();
             setTimeout(() => { window.open('https://fortnite.gg/creator/efect.lit', '_blank'); }, 200);
         });
     }
 });
+
+// --- GYROSCOPE PARALLAX PHYSICS ---
+function handleGyro(event) {
+    // event.gamma = left/right tilt, event.beta = front/back tilt
+    const x = event.gamma ? event.gamma / 1.5 : 0; 
+    // -45 assumes user holds phone tilted up toward their face
+    const y = event.beta ? (event.beta - 45) / 1.5 : 0; 
+
+    const grid = document.querySelector('.background-grid');
+    if(grid) {
+        grid.style.transform = `translate(${x}px, ${y}px)`;
+    }
+}
+
+function typeWriter() {
+    if (i < text.length) {
+        document.getElementById("typewriter").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+    } else {
+        startTerminalLog();
+    }
+}
+
+function startTerminalLog() {
+    const logElement = document.getElementById("terminal-log");
+    if (!logElement) return;
+    
+    logElement.innerText = "> " + systemLogs[0];
+    logIndex++;
+
+    setInterval(() => {
+        logElement.innerText = "> " + systemLogs[logIndex];
+        logIndex = (logIndex + 1) % systemLogs.length;
+    }, 2000);
+}
+
+function startTelemetry() {
+    const pingElement = document.getElementById("live-ping");
+    if (!pingElement) return;
+
+    setInterval(() => {
+        const fakePing = (Math.random() * 0.8 + 0.1).toFixed(2);
+        pingElement.innerText = `Simulated Input: ${fakePing}ms`;
+    }, 120); 
+}
 
 // --- PARTICLE GENERATOR ---
 document.addEventListener('click', function(e) {
@@ -123,5 +189,3 @@ function createParticle(x, y) {
 
     setTimeout(() => { particle.remove(); }, 600);
 }
-
-window.onload = typeWriter;
