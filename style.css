@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
 
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     background-color: #050505;
@@ -8,8 +9,10 @@ body, html {
     font-family: 'Fira Code', monospace;
     min-height: 100vh;
     overflow-x: hidden;
-    cursor: crosshair; 
-    overscroll-behavior-y: none; 
+    cursor: crosshair;
+    overscroll-behavior-y: none;
+    /* NEW: Smooth color shifting for the cheat code */
+    transition: filter 1s ease;
 }
 
 /* --- SPLASH SCREEN STYLES --- */

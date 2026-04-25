@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
     <div id="command-console">
@@ -32,14 +32,20 @@
         <div class="modal-content glass-card">
             <span class="close-btn" id="close-modal">&times;</span>
             <h2 style="color: #00ff00; margin-top: 0;">Live Macro Preview</h2>
-            
             <video id="macro-vid" controls autoplay loop playsinline muted>
                 <source src="preview.mp4" type="video/mp4">
             </video>
-
-            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro Now</a>
-            
+            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro</a>
             <img src="macro-ui.png" alt="Macro Hub UI" class="modal-img">
+        </div>
+    </div>
+
+    <div id="fps-modal" class="modal-overlay">
+        <div class="modal-content glass-card" style="border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,0.2);">
+            <span class="close-btn" id="close-fps-modal" style="color: #fff;">&times;</span>
+            <h2 style="color: #fff; margin-top: 0; text-shadow: 0 0 10px #fff;">FPS Booster UI</h2>
+            <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff;">
+            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn buy-btn" style="background: #fff; color: #000; box-shadow: 0 0 20px #fff; border: none;">Get Efect FPS Booster</a>
         </div>
     </div>
 
@@ -71,7 +77,8 @@
                 </div>
                 <h2 style="color: #fff; text-shadow: 0 0 10px #fff;">Efect FPS Booster</h2>
                 <p style="color: #ccc;">Maximum frame rate unlocked. Background processes terminated. Ready for launch.</p>
-                <button class="neon-btn" style="color: #000; background: #fff; box-shadow: 0 0 20px #fff; border-color: #fff;">Engage</button>
+                <button onclick="window.open('https://payhip.com/b/EQIrd', '_blank')" class="neon-btn" style="color: #000; background: #fff; box-shadow: 0 0 20px #fff; border-color: #fff;">Engage</button>
+                <button id="btn-fps-preview" class="neon-btn secondary-btn" style="border-color: #fff; color: #fff;">View UI</button>
             </div>
 
             <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
