@@ -10,10 +10,11 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-const sound1 = new Audio('sound1.mp3');
-const sound2 = new Audio('sound2.mp3');
-sound1.volume = 0.6;
-sound2.volume = 0.6;
+// THE SOUND FIX: Defined the user's new audio files with perfect mapping
+const clickSound = new Audio('spckclick.mp3'); // Snappy generic click
+const bootSound = new Audio('efectboot.mp3');   // Deep mechanical boot
+clickSound.volume = 0.6;
+bootSound.volume = 0.6;
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- SOPHISTICATED BOOT SPLASH ---
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initBtn.addEventListener('click', async () => {
             if (isBooting) return;
             isBooting = true;
-            sound1.play().catch(() => {}); 
+            bootSound.play().catch(() => {}); // Play the deep boot sound
             
             initBtn.style.display = 'none'; 
             if (bootHud) bootHud.style.display = 'flex';
@@ -117,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!lockInput) return;
             const val = lockInput.value.trim();
             if (!val) return;
-            sound1.play().catch(() => {});
+            clickSound.play().catch(() => {}); // Play the snappy click sound
 
             if (!savedPin) {
                 localStorage.setItem('efect_master_key', val);
@@ -210,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
-            sound1.play().catch(() => {});
+            clickSound.play().catch(() => {}); // Snap
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.style.display = 'flex';
@@ -236,8 +237,15 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (fm) fm.style.display = 'none'; }, 300);
     });
 
-    document.getElementById('btn-hub')?.addEventListener('click', () => window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'));
-    document.getElementById('btn-maps')?.addEventListener('click', () => window.open('https://fortnite.gg/creator/efect.lit', '_blank'));
+    document.getElementById('btn-hub')?.addEventListener('click', () => {
+        clickSound.play().catch(() => {}); // Snap
+        window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
+    });
+
+    document.getElementById('btn-maps')?.addEventListener('click', () => {
+        clickSound.play().catch(() => {}); // Snap
+        window.open('https://fortnite.gg/creator/efect.lit', '_blank');
+    });
 });
 
 // --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
