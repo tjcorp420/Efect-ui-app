@@ -12,9 +12,13 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
+    <div id="share-btn" class="icon-wrapper">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+    </div>
+
     <form id="command-console">
         <input type="text" id="cmd-input" placeholder="Enter override code..." autocomplete="off">
     </form>
@@ -110,7 +114,16 @@
         </div>
     </div>
 
+    <div id="ticker-wrap">
+        <div id="ticker-text">
+            <span class="ticker-item"><i class="fa-solid fa-circle-check"></i> SYSTEM ONLINE</span>
+            <span class="ticker-item" id="gh-update"><i class="fa-solid fa-satellite-dish"></i> FETCHING LIVE GITHUB DATA...</span>
+            <span class="ticker-item"><i class="fa-solid fa-shield-halved"></i> LATENCY BYPASS ACTIVE</span>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
+

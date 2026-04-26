@@ -472,3 +472,58 @@ canvas#matrix-canvas {
     z-index: -2;
     display: none;
 }
+/* --- NATIVE SHARE BUTTON --- */
+#share-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: #00ff00;
+    cursor: pointer;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    z-index: 1000;
+    transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+
+#share-btn:hover {
+    transform: scale(1.1);
+    text-shadow: 0 0 20px #00ff00;
+}
+
+/* --- LIVE GITHUB TICKER --- */
+#ticker-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 30px;
+    background: rgba(5, 5, 5, 0.95);
+    border-top: 1px solid rgba(0, 255, 0, 0.3);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+#ticker-text {
+    display: flex;
+    white-space: nowrap;
+    animation: scrollTicker 20s linear infinite;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #00ff00;
+}
+
+.ticker-item {
+    margin-right: 50px;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@keyframes scrollTicker {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-100%); }
+}

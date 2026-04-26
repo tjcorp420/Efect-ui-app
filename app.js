@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             splashScreen.remove();
                             typeWriter(); 
                             initDiagnostics(); 
-                            startTelemetry(); // Start the live ping loop
+                            fetchGitHubUpdates(); // PULL LIVE REPO DATA
                         }, 500);
                     }, 600);
                 }
@@ -56,7 +56,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- FIXED COMMAND CONSOLE LOGIC ---
+    // --- NATIVE IOS SHARE BUTTON ---
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'EFECT Suite',
+                        text: 'Check out the EFECT Performance & Optimization Hub.',
+                        url: window.location.href
+                    });
+                } catch (err) { console.log('Share dismissed'); }
+            } else {
+                // Fallback for non-mobile devices
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copied to clipboard!");
+            }
+        });
+    }
+
+    // --- COMMAND CONSOLE LOGIC ---
     const consoleUI = document.getElementById('command-console');
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
@@ -117,9 +137,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-maps')?.addEventListener('click', () => window.open('https://fortnite.gg/creator/efect.lit', '_blank'));
 });
 
+// --- GITHUB API LIVE FETCH ---
+async function fetchGitHubUpdates() {
+    try {
+        // Automatically fetches the latest commit from your Optimizer Repo
+        const response = await fetch('https://api.github.com/repos/tjcorp420/EFECT-OPTIMIZER-UPDATES/commits');
+        const data = await response.json();
+        
+        if(data && data[0]) {
+            const commitDate = new Date(data[0].commit.author.date).toLocaleDateString();
+            const commitMessage = data[0].commit.message;
+            document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-code-commit"></i> LATEST UPDATE (${commitDate}): ${commitMessage}`;
+        }
+    } catch (error) {
+        document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-satellite-dish"></i> GITHUB LINK ACTIVE`;
+    }
+}
+
 // --- REAL HARDWARE DIAGNOSTICS ---
 function initDiagnostics() {
-    // 1. Battery API
     const battSpan = document.getElementById('batt-level');
     if ('getBattery' in navigator) {
         navigator.getBattery().then(battery => {
@@ -129,14 +165,9 @@ function initDiagnostics() {
             updateBatt();
             battery.addEventListener('levelchange', updateBatt);
             battery.addEventListener('chargingchange', updateBatt);
-        }).catch(() => {
-            battSpan.innerText = "SECURED";
-        });
-    } else {
-        battSpan.innerText = "HIDDEN"; // Fallback for iOS Safari
-    }
+        }).catch(() => { battSpan.innerText = "SECURED"; });
+    } else { battSpan.innerText = "HIDDEN"; }
 
-    // 2. Network API
     const netSpan = document.getElementById('net-status');
     const updateNet = () => {
         if (navigator.connection && navigator.connection.effectiveType) {
@@ -202,14 +233,6 @@ function startTerminalLog() {
         log.innerText = "> " + systemLogs[logIndex];
         logIndex = (logIndex + 1) % systemLogs.length;
     }, 2000);
-}
-
-function startTelemetry() {
-    const pingElement = document.getElementById("live-ping");
-    if (!pingElement) return;
-    setInterval(() => {
-        pingElement.innerText = `Simulated Input: ${(Math.random() * 0.8 + 0.1).toFixed(2)}ms`;
-    }, 120); 
 }
 
 document.addEventListener('click', e => {
