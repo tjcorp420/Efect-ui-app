@@ -10,47 +10,36 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// --- HARDWARE AUDIO & HAPTICS BYPASS (iOS BULLETPROOF VERSION) ---
+// --- HARDWARE AUDIO & HAPTICS BYPASS ---
 const clickSound = new Audio('./click.wav'); 
 const bootSound = new Audio('./boot.mp3');   
 clickSound.volume = 0.8;
 bootSound.volume = 0.9;
 
-// The iOS Unlocker: Forces Safari to give audio permission on your first tap
-let audioUnlocked = false;
-document.addEventListener('touchstart', () => {
-    if (!audioUnlocked) {
-        clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(() => {});
-        bootSound.play().then(() => { bootSound.pause(); bootSound.currentTime = 0; }).catch(() => {});
-        audioUnlocked = true;
-    }
-}, { once: true });
-
-document.addEventListener('click', () => {
-    if (!audioUnlocked) {
-        clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(() => {});
-        bootSound.play().then(() => { bootSound.pause(); bootSound.currentTime = 0; }).catch(() => {});
-        audioUnlocked = true;
-    }
-}, { once: true });
+// Tell the browser to get these files ready immediately
+clickSound.load();
+bootSound.load();
 
 function triggerClick() {
     clickSound.currentTime = 0; 
-    clickSound.play().catch((err) => console.log("Click blocked:", err));
+    clickSound.play().catch((err) => console.log("Audio Blocked:", err));
     if (navigator.vibrate) navigator.vibrate(15); 
 }
 
 function triggerBoot() {
     bootSound.currentTime = 0;
-    bootSound.play().catch((err) => console.log("Boot blocked:", err));
+    bootSound.play().catch((err) => console.log("Audio Blocked:", err));
     if (navigator.vibrate) navigator.vibrate([40, 50, 40]); 
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const crt = document.createElement('div');
     crt.classList.add('crt-overlay');
     document.body.appendChild(crt);
+
+    // --- LOCK RESET ---
+    // Forces the card to be RED and LOCKED every time you refresh
+    localStorage.removeItem('efect_monitor_unlocked');
 
     const savedScore = localStorage.getItem('efect_synergy_score');
     if (savedScore) {
@@ -70,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
         initBtn.addEventListener('click', async () => {
             if (isBooting) return;
             isBooting = true;
+            
+            // APPLE IOS AUDIO UNLOCK: Playing a sound on this specific click
+            // unlocks the entire audio engine for the whole app.
             triggerBoot(); 
             
             initBtn.style.display = 'none'; 
@@ -127,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- SECURE LOCK SCREEN LOGIC ---
+    // --- LOCK SCREEN LOGIC ---
     function initLockScreen() {
         const lockScreen = document.getElementById('lock-screen');
         if (!lockScreen) {
@@ -192,31 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
             typeWriter(); 
             initDiagnostics(); 
             fetchGitHubUpdates();
-            
-            // TRIGGERS THE SALES NOTIFICATION ENGINE
             scheduleNextSale();
-
         }, 400);
-    }
-
-    // --- NATIVE IOS SHARE BUTTON ---
-    const shareBtn = document.getElementById('share-btn');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', async () => {
-            triggerClick();
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'EFECT Suite',
-                        text: 'Check out the EFECT Performance & Optimization Hub.',
-                        url: window.location.href
-                    });
-                } catch (err) {}
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert("Link copied to clipboard!");
-            }
-        });
     }
 
     // --- COMMAND CONSOLE LOGIC ---
@@ -242,10 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fCard = document.getElementById('secret-fps-card');
                 if (fCard) fCard.style.display = 'flex';
                 alert("FPS OVERRIDE ACTIVE.");
-            } else if (code === 'color_override') {
-                document.body.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
-            } else if (code === 'matrix') {
-                startMatrix();
             } else if (code === '420') {
                 triggerBoot(); 
                 unlockHardwareMonitor();
@@ -257,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MODALS & NEW DOCUMENTATION VAULT BINDINGS ---
+    // --- MODALS & BINDINGS ---
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -296,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
             triggerClick();
             tabBtns.forEach(b => b.classList.remove('active'));
             docContents.forEach(c => c.classList.remove('active'));
-            
             btn.classList.add('active');
             document.getElementById(btn.dataset.target).classList.add('active');
         });
@@ -312,37 +276,24 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open('https://fortnite.gg/creator/efect.lit', '_blank');
     });
 
-    // --- SYNERGY CALCULATION LOGIC & AUTO-SAVE ---
+    // --- SYNERGY CALCULATION LOGIC ---
     document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
         triggerClick();
-        
         const gpuName = document.getElementById('syn-gpu').value.toUpperCase() || "UNKNOWN GPU";
         const cpuName = document.getElementById('syn-cpu').value.toUpperCase() || "UNKNOWN CPU";
         const perName = document.getElementById('syn-per').value.toUpperCase() || "STANDARD GEAR";
         
         let gpuVal = 50;
-        if (gpuName.includes('4090') || gpuName.includes('7900 XTX')) gpuVal = 100;
-        else if (gpuName.includes('4080') || gpuName.includes('4070 TI') || gpuName.includes('7900 XT')) gpuVal = 95;
-        else if (gpuName.includes('4070') || gpuName.includes('3090') || gpuName.includes('7800')) gpuVal = 88;
-        else if (gpuName.includes('4060') || gpuName.includes('3080') || gpuName.includes('7700')) gpuVal = 82;
-        else if (gpuName.includes('3070') || gpuName.includes('6700') || gpuName.includes('2080')) gpuVal = 75;
-        else if (gpuName.includes('3060') || gpuName.includes('2070') || gpuName.includes('6600')) gpuVal = 65;
-        else if (gpuName.includes('3050') || gpuName.includes('1660') || gpuName.includes('2060')) gpuVal = 45;
+        if (gpuName.includes('4090')) gpuVal = 100;
+        else if (gpuName.includes('4080') || gpuName.includes('4070')) gpuVal = 90;
+        else if (gpuName.includes('4060') || gpuName.includes('3080')) gpuVal = 80;
 
         let cpuVal = 50;
-        if (cpuName.includes('14900') || cpuName.includes('7950X3D') || cpuName.includes('7800X3D')) cpuVal = 100;
-        else if (cpuName.includes('14700') || cpuName.includes('13900') || cpuName.includes('7900X')) cpuVal = 95;
-        else if (cpuName.includes('14600') || cpuName.includes('13700') || cpuName.includes('7700X')) cpuVal = 88;
-        else if (cpuName.includes('13600') || cpuName.includes('12900') || cpuName.includes('5800X3D')) cpuVal = 82;
-        else if (cpuName.includes('12700') || cpuName.includes('12600') || cpuName.includes('5700X')) cpuVal = 75;
-        else if (cpuName.includes('12400') || cpuName.includes('11600') || cpuName.includes('5600')) cpuVal = 65;
+        if (cpuName.includes('14900') || cpuName.includes('7800X3D')) cpuVal = 100;
+        else if (cpuName.includes('14700') || cpuName.includes('13900')) cpuVal = 95;
+        else if (cpuName.includes('14600')) cpuVal = 85;
 
-        let perVal = 50;
-        if (perName.includes('APEX PRO') || perName.includes('SUPERLIGHT') || perName.includes('WOOTING') || perName.includes('SCUF') || perName.includes('HEX')) perVal = 100;
-        else if (perName.includes('PRO') || perName.includes('ESPORTS')) perVal = 85;
-        
-        const score = Math.floor((gpuVal * 0.45) + (cpuVal * 0.40) + (perVal * 0.15));
-        
+        const score = Math.floor((gpuVal * 0.45) + (cpuVal * 0.40) + (50 * 0.15));
         const resultBox = document.getElementById('syn-result');
         const scoreText = document.getElementById('syn-score-text');
         const adviceText = document.getElementById('syn-advice');
@@ -350,67 +301,34 @@ document.addEventListener('DOMContentLoaded', () => {
         
         resultBox.style.display = 'block';
         scoreText.innerText = "CALC...";
-        adviceText.innerText = "Scanning exact hardware identifiers and simulating 1% low frame times...";
         
         setTimeout(() => {
             triggerClick(); 
             scoreText.innerText = score;
-            
             localStorage.setItem('efect_synergy_score', score);
             if (cardScore) cardScore.innerText = `${score}/100`;
-            
-            let customFeedback = "";
-            
-            if (gpuVal < cpuVal - 15) {
-                customFeedback += `BOTTLENECK: Your ${gpuName} is holding back the ${cpuName}. Recommend lowering 3D resolution. `;
-            } else if (cpuVal < gpuVal - 15) {
-                customFeedback += `BOTTLENECK: Your ${cpuName} is choking the ${gpuName}. Lock CPU cores with EFECT Optimizer. `;
-            } else {
-                customFeedback += `PERFECT SYNERGY: The ${cpuName} and ${gpuName} are flawlessly paired. `;
-            }
-            
-            if (score >= 90) {
-                customFeedback += `\n\nSTATUS: Elite Tier. You have raw 0-delay hardware. Inject EFECT Macros for absolute minimum input lag.`;
-            } else if (score >= 70) {
-                customFeedback += `\n\nSTATUS: Competitive Tier. Solid frame times. Ensure your peripheral polling rates are maxed to match the system.`;
-            } else {
-                customFeedback += `\n\nSTATUS: Casual Tier. Heavy optimizations required. Drop all Fortnite settings to Performance Mode.`;
-            }
-            
-            adviceText.innerText = customFeedback;
+            adviceText.innerText = score >= 85 ? "Elite System Detected." : "Optimization Recommended.";
         }, 1500);
     });
 
-    // --- HARDWARE MONITOR JAILBREAK & TELEMETRY ENGINE ---
+    // --- HARDWARE MONITOR JAILBREAK ENGINE ---
     function unlockHardwareMonitor() {
         const hwCard = document.getElementById('hw-monitor-card');
         const hwBtn = document.getElementById('btn-hw-monitor');
         const hwBadge = document.getElementById('hw-status-badge');
-        
         if (hwCard && hwBtn && hwBadge) {
             hwCard.classList.remove('locked');
             hwBadge.className = 'status online';
             hwBadge.innerHTML = '<span class="dot"></span> ONLINE';
             hwBadge.style.color = '#00ff00';
-            hwBadge.style.borderColor = '#00ff00';
-            hwBadge.style.background = 'rgba(0,255,0,0.1)';
-            
             hwBtn.classList.remove('disabled');
             hwBtn.removeAttribute('disabled');
             hwBtn.innerText = 'OPEN TELEMETRY';
-            
-            localStorage.setItem('efect_monitor_unlocked', 'true');
         }
-    }
-
-    if (localStorage.getItem('efect_monitor_unlocked') === 'true') {
-        unlockHardwareMonitor();
     }
 
     document.getElementById('btn-hw-monitor')?.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (document.getElementById('btn-hw-monitor').classList.contains('disabled')) return;
-        
         triggerClick();
         const modal = document.getElementById('telemetry-modal');
         if (modal) {
@@ -425,151 +343,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tm) tm.style.opacity = '0';
         setTimeout(() => { if (tm) tm.style.display = 'none'; }, 300);
     });
-
-    document.getElementById('btn-force-cool')?.addEventListener('click', () => {
-        triggerBoot(); 
-        document.getElementById('tel-cpu-temp').innerText = '32°C';
-        document.getElementById('tel-gpu-temp').innerText = '28°C';
-        document.getElementById('tel-cpu-temp').style.color = '#00ffff'; 
-        document.getElementById('tel-gpu-temp').style.color = '#00ffff'; 
-        setTimeout(() => {
-            document.getElementById('tel-cpu-temp').style.color = '#00ff00';
-            document.getElementById('tel-gpu-temp').style.color = '#00ff00';
-        }, 2000);
-    });
-
-    setInterval(() => {
-        const tm = document.getElementById('telemetry-modal');
-        if (tm && tm.style.opacity === '1') {
-            
-            document.getElementById('tel-cpu-temp').innerText = Math.floor(Math.random() * (65 - 40) + 40) + '°C';
-            document.getElementById('tel-cpu-load').innerText = Math.floor(Math.random() * (45 - 10) + 10) + '%';
-            document.getElementById('tel-gpu-temp').innerText = Math.floor(Math.random() * (55 - 35) + 35) + '°C';
-            document.getElementById('tel-gpu-load').innerText = Math.floor(Math.random() * (35 - 5) + 5) + '%';
-            
-            const graph = document.getElementById('ping-graph');
-            if (graph) {
-                const bar = document.createElement('div');
-                const ping = Math.floor(Math.random() * (25 - 0) + 5); 
-                
-                bar.style.width = '8px';
-                bar.style.flexShrink = '0';
-                bar.style.backgroundColor = ping > 20 ? '#ff3333' : '#00ff00'; 
-                bar.style.height = (ping * 3) + '%'; 
-                bar.style.transition = 'height 0.2s ease';
-                
-                graph.appendChild(bar);
-                
-                if (graph.children.length > 50) {
-                    graph.removeChild(graph.firstChild);
-                }
-            }
-        }
-    }, 600); 
 });
 
-// --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
-async function fetchGitHubUpdates() {
-    const ghUpdateElement = document.getElementById('gh-update');
-    if (!ghUpdateElement) return;
-
-    const cachedData = localStorage.getItem('efect_gh_update');
-    const cacheTime = localStorage.getItem('efect_gh_time');
-    
-    if (cachedData && cacheTime && (Date.now() - cacheTime < 300000)) {
-        ghUpdateElement.innerHTML = cachedData;
-        return;
-    }
-
-    try {
-        const response = await fetch('https://api.github.com/users/tjcorp420/events/public');
-        if (response.status === 403) {
-            if (cachedData) ghUpdateElement.innerHTML = cachedData; 
-            else ghUpdateElement.innerHTML = `<i class="fa-solid fa-shield-halved"></i> GITHUB API RATE LIMIT: STANDING BY...`;
-            return;
-        }
-
-        const events = await response.json();
-        const lastPush = events.find(event => event.type === 'PushEvent' && event.payload && event.payload.commits && event.payload.commits.length > 0);
-        
-        if (lastPush) {
-            let repoName = lastPush.repo.name.split('/')[1].replace(/-/g, ' '); 
-            const commitDate = new Date(lastPush.created_at).toLocaleDateString();
-            const commitMessage = lastPush.payload.commits[0].message;
-            const finalHTML = `<i class="fa-solid fa-code-commit"></i> LATEST UPDATE [${repoName}] (${commitDate}): ${commitMessage}`;
-            ghUpdateElement.innerHTML = finalHTML;
-            localStorage.setItem('efect_gh_update', finalHTML);
-            localStorage.setItem('efect_gh_time', Date.now());
-        } else {
-            ghUpdateElement.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> SCANNING FOR NEW EFECT UPDATES...`;
-        }
-    } catch (error) {
-        ghUpdateElement.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> GITHUB LINK SECURED`;
-    }
-}
-
-// --- REAL HARDWARE DIAGNOSTICS ---
-function initDiagnostics() {
-    const battSpan = document.getElementById('batt-level');
-    if (battSpan) {
-        if ('getBattery' in navigator) {
-            navigator.getBattery().then(battery => {
-                const updateBatt = () => { battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`; };
-                updateBatt();
-                battery.addEventListener('levelchange', updateBatt);
-                battery.addEventListener('chargingchange', updateBatt);
-            }).catch(() => { battSpan.innerText = "SECURED"; });
-        } else { battSpan.innerText = "HIDDEN"; }
-    }
-
-    const netSpan = document.getElementById('net-status');
-    if (netSpan) {
-        const updateNet = () => {
-            if (navigator.connection && navigator.connection.effectiveType) {
-                netSpan.innerText = navigator.connection.effectiveType.toUpperCase();
-            } else {
-                netSpan.innerText = navigator.onLine ? 'ONLINE' : 'OFFLINE';
-            }
-        };
-        updateNet();
-        window.addEventListener('online', updateNet);
-        window.addEventListener('offline', updateNet);
-    }
-}
-
-// --- MATRIX EFFECT ---
-function startMatrix() {
-    const canvas = document.getElementById('matrix-canvas') || document.createElement('canvas');
-    canvas.id = 'matrix-canvas';
-    document.body.appendChild(canvas);
-    canvas.style.display = 'block';
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#00ff00";
-        ctx.font = fontSize + "px arial";
-
-        for (let i = 0; i < drops.length; i++) {
-            const text = characters.charAt(Math.floor(Math.random() * characters.length));
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        }
-    }
-    setInterval(draw, 33);
-}
-
-// --- CORE UTILS ---
+// --- UTILS ---
 function handleGyro(e) {
     const galaxy = document.querySelector('.galaxy-wrapper');
     if (galaxy) galaxy.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
@@ -594,64 +370,19 @@ function startTerminalLog() {
     }
 }
 
-// --- LIQUID RIPPLES AND PARTICLES ---
-document.addEventListener('click', e => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION') return;
-
-    const ripple = document.createElement('div');
-    ripple.classList.add('ripple');
-    ripple.style.left = e.pageX + 'px';
-    ripple.style.top = e.pageY + 'px';
-    document.body.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600); 
-
-    if (e.target.tagName === 'BUTTON' || e.target.classList.contains('tab-btn')) return;
-    
-    for (let j = 0; j < 8; j++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        document.body.appendChild(p);
-        const angle = Math.random() * Math.PI * 2;
-        const vel = 30 + Math.random() * 50;
-        p.style.left = e.pageX + 'px';
-        p.style.top = e.pageY + 'px';
-        p.style.setProperty('--tx', Math.cos(angle) * vel + 'px');
-        p.style.setProperty('--ty', Math.sin(angle) * vel + 'px');
-        setTimeout(() => p.remove(), 600);
-    }
-});
-
-// --- LIVE SOCIAL PROOF / SALES ENGINE ---
-const efectProducts = [
-    "Efect Pro Elite", 
-    "Efect Macro Engine", 
-    "Efect FPS Booster", 
-    "Zero Delay Tweaks"
-];
-
-const efectLocations = [
-    "Texas, USA", "London, UK", "California, USA", "Germany", 
-    "France", "Florida, USA", "Toronto, CAN", "New York, USA", 
-    "Australia", "Brazil", "Japan", "Ohio, USA", "Sweden"
-];
+// --- SALES ENGINE ---
+const efectProducts = ["Efect Pro Elite", "Efect Macro Engine", "Efect FPS Booster"];
+const efectLocations = ["Texas, USA", "London, UK", "Florida, USA", "Germany"];
 
 function triggerRandomSale() {
     const toast = document.getElementById('sales-toast');
     if (!toast) return;
-
     const product = efectProducts[Math.floor(Math.random() * efectProducts.length)];
     const location = efectLocations[Math.floor(Math.random() * efectLocations.length)];
     const orderNum = Math.floor(Math.random() * 90000) + 10000; 
-    
-    // The Extra: Fake Routing IP appended to the order number
-    const fakeIP = `1${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 255)}.xxx.xx`;
-
-    document.getElementById('sale-desc').innerHTML = `User from <strong>${location}</strong> secured <strong>${product}</strong> <br><span style="color:#555; font-size: 0.65rem;">[Order #${orderNum}] | ROUTE: ${fakeIP}</span>`;
-
+    document.getElementById('sale-desc').innerHTML = `User from <strong>${location}</strong> secured <strong>${product}</strong> <br>[Order #${orderNum}]`;
     toast.classList.add('show');
     clickSound.play().catch(() => {});
-    if (navigator.vibrate) navigator.vibrate(15);
-
     setTimeout(() => {
         toast.classList.remove('show');
         scheduleNextSale();
@@ -662,8 +393,3 @@ function scheduleNextSale() {
     const nextDelay = Math.floor(Math.random() * (45000 - 15000 + 1)) + 15000;
     setTimeout(triggerRandomSale, nextDelay);
 }
-
-document.getElementById('close-sales-toast')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('sales-toast').classList.remove('show');
-});
