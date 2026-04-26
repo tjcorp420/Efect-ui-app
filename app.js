@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
     });
 
-            // --- SYNERGY CALCULATION LOGIC ---
+    // --- SYNERGY CALCULATION LOGIC ---
     document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
         triggerClick();
         
@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             adviceText.innerText = customFeedback;
         }, 1500);
     });
+
 
 
 
