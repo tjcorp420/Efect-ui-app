@@ -4,28 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>EFECT Suite | Performance & Utilities</title>
-    
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050505">
     <link rel="apple-touch-icon" href="icon.png">
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39+Text&family=Fira+Code:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=130">
+    <link rel="stylesheet" href="style.css?v=150">
 </head>
 <body>
-    <div id="share-btn" class="icon-wrapper" style="position:fixed; top:20px; right:20px; z-index:100002; color:#00ff00; cursor:pointer; font-size:1.5rem;">
+    <div id="sys-noti">SYSTEM OVERRIDE ACCEPTED</div>
+
+    <div id="share-btn" class="icon-wrapper">
         <i class="fa-solid fa-arrow-up-from-bracket"></i>
     </div>
 
     <div id="sales-toast">
         <span class="toast-close" id="close-sales-toast">&times;</span>
-        <div class="toast-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+        <div class="toast-icon"><i class="fa-solid fa-satellite-dish"></i></div>
         <div class="toast-text">
-            <h4 style="letter-spacing: 1px; color:#00ff00; margin:0;">SECURE CHECKOUT</h4>
-            <p id="sale-desc" style="margin:0; font-size:0.75rem; color:#ccc;">Incoming data...</p>
+            <h4 style="letter-spacing: 1px; color:#00ff00; margin:0 0 5px 0; text-shadow: 0 0 8px #00ff00;">SECURE CHECKOUT</h4>
+            <p id="sale-desc" style="margin:0; font-size:0.8rem; color:#ccc;">Incoming data...</p>
         </div>
     </div>
 
@@ -40,7 +39,7 @@
             <div class="scanner-line"></div>
         </div>
         <div id="splash-terminal"></div>
-        <button id="init-btn" class="neon-btn">INITIALIZE SYSTEM</button>
+        <button id="init-btn" class="neon-btn pulse-fast">INITIALIZE SYSTEM</button>
         <div id="loader-wrapper" style="display: none;">
             <div id="loader-bar"></div>
         </div>
@@ -48,10 +47,10 @@
 
     <div id="lock-screen" class="modal-overlay" style="background-color: #020202; z-index: 99998;">
         <div class="modal-content glass-card" style="display: flex; flex-direction: column; align-items: center; border-color: #00ff00;">
-            <i class="fa-solid fa-lock" style="font-size: 2.5rem; color: #00ff00; margin-bottom: 1rem;"></i>
+            <i class="fa-solid fa-lock" style="font-size: 2.5rem; color: #00ff00; margin-bottom: 1rem; text-shadow: 0 0 15px #00ff00;"></i>
             <h2 id="lock-title" style="color: #00ff00; margin-top: 0;">SYSTEM LOCKED</h2>
             <p id="lock-subtitle" style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Enter Master Key to access the EFECT Hub.</p>
-            <input type="password" id="lock-input" placeholder="***" style="background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #00ff00; padding: 10px; text-align: center; font-family: 'Fira Code', monospace; width: 80%; margin-bottom: 1rem; border-radius: 4px; outline: none; font-size: 1.2rem; letter-spacing: 5px;">
+            <input type="password" id="lock-input" placeholder="***" style="background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #00ff00; padding: 10px; text-align: center; font-family: 'Fira Code', monospace; width: 80%; margin-bottom: 1rem; border-radius: 4px; outline: none; font-size: 1.5rem; letter-spacing: 8px;">
             <button id="lock-btn" class="neon-btn" style="width: 80%;">AUTHENTICATE</button>
             <p id="lock-error" style="color: #ff3333; font-size: 0.8rem; margin-top: 15px; display: none; font-weight: bold;">> ERROR: ACCESS DENIED</p>
         </div>
@@ -59,28 +58,27 @@
 
     <div id="preview-modal" class="modal-overlay">
         <div class="modal-content glass-card">
-            <span class="close-btn" id="close-modal">&times;</span>
+            <div class="close-hitbox"><span class="close-btn">&times;</span></div>
             <h2 style="color: #00ff00; margin-top: 0;">Live Macro Preview</h2>
-            <video id="macro-vid" controls loop playsinline muted>
+            <video id="macro-vid" controls loop playsinline muted style="width:100%; border:1px solid #00ff00; border-radius:8px; margin-bottom:1rem;">
                 <source src="preview.mp4" type="video/mp4">
             </video>
             <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro</a>
-            <img src="macro-ui.png" alt="Macro Hub UI" class="modal-img">
         </div>
     </div>
 
     <div id="fps-modal" class="modal-overlay">
         <div class="modal-content glass-card" style="border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,0.2);">
-            <span class="close-btn" id="close-fps-modal" style="color: #fff;">&times;</span>
+            <div class="close-hitbox"><span class="close-btn" style="color:#fff;">&times;</span></div>
             <h2 style="color: #fff; margin-top: 0; text-shadow: 0 0 10px #fff;">FPS Booster UI</h2>
-            <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff;">
-            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn buy-btn" style="background: #fff; color: #000; box-shadow: 0 0 20px #fff; border: none;">Get Efect FPS Booster</a>
+            <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff; width:100%; border-radius:8px;">
+            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="background: #fff; color: #000; border: none; margin-top:1rem;">Get Efect FPS Booster</a>
         </div>
     </div>
 
     <div id="synergy-modal" class="modal-overlay">
         <div class="modal-content glass-card">
-            <span class="close-btn" id="close-synergy-modal">&times;</span>
+            <div class="close-hitbox"><span class="close-btn">&times;</span></div>
             <h2 style="color: #00ff00; margin-top: 0;">Hardware Analyzer</h2>
             <div style="text-align: left; margin-bottom: 12px;">
                 <label style="color: #00ff00; font-size: 0.8rem;">GPU TIER:</label>
@@ -97,16 +95,10 @@
                     <option value="3" selected>Modern Core (i5-14600K / Ryzen 7800X3D)</option>
                 </select>
             </div>
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">PERIPHERALS:</label>
-                <select id="syn-per" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); color: #00ff00; border: 1px solid #00ff00; margin-top: 5px; outline: none; font-family: monospace;">
-                    <option value="4" selected>Pro Esports (Apex Pro Mini / Superlight 2)</option>
-                </select>
-            </div>
             <div id="syn-result" style="display: none; margin-bottom: 15px; padding: 15px; border: 1px dashed #00ff00; background: rgba(0,255,0,0.1);">
                 <h3 style="margin: 0; color: #fff;">SCORE: <span id="syn-score-text" style="color: #00ff00;">--</span>/100</h3>
             </div>
-            <button id="run-synergy-btn" class="neon-btn" style="width: 100%;">RUN DIAGNOSTIC</button>
+            <button id="run-synergy-btn" class="neon-btn">RUN DIAGNOSTIC</button>
         </div>
     </div>
 
@@ -121,10 +113,10 @@
             <div id="terminal-log" class="terminal-log"></div>
         </header>
 
-        <div id="diag-panel" class="glass-card">
+        <div id="diag-panel" class="glass-card" style="width:90%; max-width:630px; margin:0 auto 2rem; display:flex; flex-direction:row; justify-content:space-around; padding:15px;">
             <div class="diag-item"><i class="fa-solid fa-battery-three-quarters"></i> <span id="batt-level">SCAN...</span></div>
             <div class="diag-item"><i class="fa-solid fa-wifi"></i> <span id="net-status">SCAN...</span></div>
-            <div class="diag-item"><i class="fa-solid fa-microchip"></i> <span id="proc-load">EFECT: ACTIVE</span></div>
+            <div class="diag-item"><i class="fa-solid fa-microchip"></i> <span id="proc-load">ACTIVE</span></div>
         </div>
         
         <div class="card-container">
@@ -135,8 +127,10 @@
                 </div>
                 <h2>Efect Macros & Tweaks</h2>
                 <p>Zero-delay system tweaks, high-precision automation, and ultimate latency reduction.</p>
-                <button id="btn-hub" class="neon-btn">Access Hub</button>
-                <button id="btn-preview" class="neon-btn secondary-btn">Watch Preview</button>
+                <div class="btn-stack">
+                    <button id="btn-hub" class="neon-btn">Access Hub</button>
+                    <button id="btn-preview" class="neon-btn secondary-btn">Watch Preview</button>
+                </div>
             </div>
 
             <div id="secret-fps-card" class="glass-card" style="display: none; border-color: #fff;" data-tilt>
@@ -146,8 +140,10 @@
                 </div>
                 <h2 style="color: #fff;">Efect FPS Booster</h2>
                 <p style="color: #ccc;">Maximum frame rate unlocked. Background processes terminated.</p>
-                <button onclick="window.open('https://payhip.com/b/EQIrd', '_blank')" class="neon-btn" style="color: #000; background: #fff; border-color: #fff;">Engage</button>
-                <button id="btn-fps-preview" class="neon-btn secondary-btn" style="border-color: #fff; color: #fff;">View UI</button>
+                <div class="btn-stack">
+                    <button onclick="window.open('https://payhip.com/b/EQIrd', '_blank')" class="neon-btn" style="color: #000; background: #fff; border-color: #fff;">Engage</button>
+                    <button id="btn-fps-preview" class="neon-btn secondary-btn" style="border-color: #fff; color: #fff;">View UI</button>
+                </div>
             </div>
 
             <div class="glass-card" data-tilt>
@@ -163,12 +159,12 @@
             <div class="glass-card" data-tilt>
                 <div class="card-header">
                     <div class="icon-wrapper"><i class="fa-solid fa-calculator"></i></div>
-                    <span class="status online" style="color: #00ff00; border-color: #00ff00; background: rgba(0,255,0,0.1);"><span class="dot"></span> LIVE TOOL</span>
+                    <span class="status online"><span class="dot"></span> LIVE TOOL</span>
                 </div>
                 <h2>Synergy Calculator</h2>
                 <p>Analyze your hardware & settings to find your true latency potential.</p>
-                <p style="color: #00ff00; font-family: monospace; font-weight: bold; font-size: 0.9rem;">SCORE: <span id="card-synergy-score">--</span></p>
-                <button id="btn-synergy" class="neon-btn" style="background: #00ff00; color: #000;">LAUNCH ANALYZER</button>
+                <p style="color: #00ff00; font-family: monospace; font-weight: bold;">SCORE: <span id="card-synergy-score">--</span></p>
+                <button id="btn-synergy" class="neon-btn">LAUNCH ANALYZER</button>
             </div>
 
             <div id="hw-monitor-card" class="glass-card locked" data-tilt>
@@ -192,8 +188,7 @@
         </div>
     </div>
 
-    <canvas id="matrix-canvas"></canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
-    <script src="app.js?v=130"></script>
+    <script src="app.js?v=150"></script>
 </body>
 </html>

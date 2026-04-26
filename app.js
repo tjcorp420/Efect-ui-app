@@ -10,23 +10,10 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// Corrected audio files based on your request
 const bootSound = new Audio('efectboot.mp3');
 const clickSound = new Audio('sound1.mp3');
 bootSound.volume = 1.0;
 clickSound.volume = 0.8;
-
-// iOS Audio Unlocker
-document.body.addEventListener('touchstart', () => {
-    if(clickSound.currentTime === 0) {
-        clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(()=>{});
-    }
-}, { once: true });
-
-function triggerBoot() {
-    bootSound.currentTime = 0;
-    bootSound.play().catch(()=>{});
-}
 
 function triggerClick() {
     clickSound.currentTime = 0;
@@ -34,29 +21,40 @@ function triggerClick() {
     if (navigator.vibrate) navigator.vibrate(15);
 }
 
+function showSysMsg(msg) {
+    const noti = document.getElementById('sys-noti');
+    noti.innerText = msg;
+    noti.classList.add('show');
+    setTimeout(() => noti.classList.remove('show'), 3000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    localStorage.removeItem('efect_monitor_unlocked'); // Force lock
+    localStorage.removeItem('efect_monitor_unlocked');
     const savedScore = localStorage.getItem('efect_synergy_score');
     if (savedScore) document.getElementById('card-synergy-score').innerText = savedScore;
 
-    // --- BOOT SPLASH & GYRO ---
     const initBtn = document.getElementById('init-btn');
     const splashScreen = document.getElementById('splash-screen');
     const splashTerminal = document.getElementById('splash-terminal');
     const loaderBar = document.getElementById('loader-bar');
 
     if(initBtn) {
-        initBtn.onclick = async function() {
-            triggerBoot();
+        initBtn.addEventListener('click', function(e) {
+            // FIRE BOOT SOUND IMMEDIATELY
+            bootSound.play().catch(err => console.log("Boot Sound Blocked", err));
+            clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(()=>{});
+            
             initBtn.style.display = 'none'; 
             document.getElementById('loader-wrapper').style.display = 'block';
             
+            // ASK GYRO PERMISSION
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permissionState = await DeviceOrientationEvent.requestPermission();
-                    if (permissionState === 'granted') window.addEventListener('deviceorientation', handleGyro);
-                } catch (e) { console.error(e); }
-            } else { window.addEventListener('deviceorientation', handleGyro); }
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state === 'granted') window.addEventListener('deviceorientation', handleGyro);
+                }).catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleGyro);
+            }
 
             let bootIdx = 0;
             const bootInterval = setInterval(() => {
@@ -75,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 600);
                 }
             }, 300);
-        };
+        });
     }
 
     // --- SECURE LOCK SCREEN LOGIC ---
@@ -138,14 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     consoleUI.addEventListener('submit', function (e) {
         e.preventDefault(); 
-        triggerClick();
+        triggerClick(); // PLAY SOUND ON SUBMIT
         const code = cmdInput.value.toLowerCase().replace(/\s+/g, '');
         
         if (code === 'efect.lit') {
-            triggerBoot();
             document.getElementById('secret-fps-card').style.display = 'flex';
+            showSysMsg("> OVERRIDE: FPS BOOSTER UNLOCKED");
         } else if (code === '420') {
-            triggerBoot();
             const hwCard = document.getElementById('hw-monitor-card');
             const hwBtn = document.getElementById('btn-hw-monitor');
             hwCard.classList.remove('locked');
@@ -154,13 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
             hwBtn.classList.remove('disabled');
             hwBtn.removeAttribute('disabled');
             hwBtn.innerText = 'OPEN TELEMETRY';
-        } else if (code === 'color_override') {
-            document.body.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
-        } else if (code === 'matrix') {
-            startMatrix();
+            showSysMsg("> OVERRIDE: HARDWARE TELEMETRY UNLOCKED");
+        } else {
+            showSysMsg("> ERROR: UNKNOWN DIRECTIVE");
         }
         
-        consoleUI.style.top = '-100px';
+        consoleUI.style.top = '-120px';
         cmdInput.value = '';
         cmdInput.blur();
     });
@@ -181,17 +177,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModal('btn-fps-preview', 'fps-modal');
     setupModal('btn-synergy', 'synergy-modal');
 
-    document.querySelectorAll('.close-btn').forEach(btn => {
+    document.querySelectorAll('.close-hitbox, .close-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             triggerClick();
             const mod = this.closest('.modal-overlay');
-            mod.style.opacity = '0';
-            document.getElementById('macro-vid')?.pause();
-            setTimeout(() => mod.style.display = 'none', 300);
+            if(mod) {
+                mod.style.opacity = '0';
+                document.getElementById('macro-vid')?.pause();
+                setTimeout(() => mod.style.display = 'none', 300);
+            }
         });
     });
 
-    // Synergy Logic
     document.getElementById('run-synergy-btn')?.addEventListener('click', function() {
         triggerClick();
         let score = Math.floor(Math.random() * (99 - 94) + 94);
@@ -204,14 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-hub')?.addEventListener('click', () => { triggerClick(); window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'); });
     document.getElementById('btn-maps')?.addEventListener('click', () => { triggerClick(); window.open('https://fortnite.gg/creator/efect.lit', '_blank'); });
     
-    // Share Button
     document.getElementById('share-btn')?.addEventListener('click', async () => {
         triggerClick();
         if (navigator.share) {
             try { await navigator.share({ title: 'EFECT Suite', text: 'Check out the EFECT Performance Hub.', url: window.location.href }); } catch (err) {}
         } else {
             navigator.clipboard.writeText(window.location.href);
-            alert("Link copied to clipboard!");
+            showSysMsg("Link Copied!");
         }
     });
 });
@@ -238,35 +234,6 @@ function initDiagnostics() {
     window.addEventListener('offline', updateNet);
 }
 
-// --- MATRIX EFFECT ---
-function startMatrix() {
-    const canvas = document.getElementById('matrix-canvas') || document.createElement('canvas');
-    canvas.id = 'matrix-canvas';
-    document.body.appendChild(canvas);
-    canvas.style.display = 'block';
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const fontSize = 16;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#00ff00";
-        ctx.font = fontSize + "px arial";
-        for (let i = 0; i < drops.length; i++) {
-            const text = characters.charAt(Math.floor(Math.random() * characters.length));
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        }
-    }
-    setInterval(draw, 33);
-}
-
-// --- CORE UTILS ---
 function handleGyro(e) {
     const grid = document.querySelector('.background-grid');
     if(grid) grid.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
@@ -293,32 +260,33 @@ function startTelemetry() {
     setInterval(() => { pingElement.innerText = `Simulated Latency: ${(Math.random() * 0.8 + 0.1).toFixed(2)}ms`; }, 120); 
 }
 
-// Sales Engine with Barcode
+// --- CYBER SALES ENGINE ---
 function triggerRandomSale() {
     const toast = document.getElementById('sales-toast');
-    const locs = ["Texas", "London", "Florida", "California", "Germany"];
+    const locs = ["Texas", "London", "Florida", "California"];
     const products = ["Efect Pro Elite", "Efect Macro Engine", "Efect FPS Booster"];
     const l = locs[Math.floor(Math.random() * locs.length)];
     const p = products[Math.floor(Math.random() * products.length)];
-    const barcodeVal = Math.floor(Math.random() * 900000000) + 100000000;
-    const orderNum = Math.floor(Math.random() * 90000) + 10000;
+    const ip = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*100)}.xx`;
     
-    document.getElementById('sale-desc').innerHTML = `User from <strong>${l}</strong> secured <strong>${p}</strong><div class="barcode">*${barcodeVal}*</div><span style="font-size:0.7rem; color:#888;">[Order #${orderNum}]</span>`;
+    document.getElementById('sale-desc').innerHTML = `User from <strong>${l}</strong> secured <strong>${p}</strong><br><span style="color:#00ff00; font-family:monospace; text-shadow:0 0 8px #00ff00;">[IP: ${ip}]</span>`;
+    
     toast.classList.add('show');
     triggerClick();
     setTimeout(() => { toast.classList.remove('show'); scheduleNextSale(); }, 6000); 
 }
 function scheduleNextSale() { setTimeout(triggerRandomSale, 25000); }
 
-// Particles
+// --- LEGACY CLICK PARTICLES ---
 document.addEventListener('click', e => {
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+    try { clickSound.play().catch(()=>{}); } catch(err){}
     for (let j = 0; j < 8; j++) {
         const p = document.createElement('div');
         p.classList.add('particle');
         document.body.appendChild(p);
         const angle = Math.random() * Math.PI * 2;
-        const vel = 30 + Math.random() * 50;
+        const vel = 40 + Math.random() * 60;
         p.style.left = e.pageX + 'px';
         p.style.top = e.pageY + 'px';
         p.style.setProperty('--tx', Math.cos(angle) * vel + 'px');
