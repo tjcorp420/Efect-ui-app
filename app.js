@@ -10,12 +10,30 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-const clickSound = new Audio('All other button clicks.wav'); 
-const bootSound = new Audio('Initializesound.mp3');   
-clickSound.volume = 0.6;
-bootSound.volume = 0.6;
+// --- HARDWARE AUDIO & HAPTICS BYPASS ---
+const clickSound = new Audio('spckclick.mp3'); 
+const bootSound = new Audio('efectboot.mp3');   
+clickSound.volume = 0.8;
+bootSound.volume = 0.9;
+
+function triggerClick() {
+    clickSound.currentTime = 0; // Allows rapid spamming
+    clickSound.play().catch(() => {});
+    if (navigator.vibrate) navigator.vibrate(15); // Short mechanical snap
+}
+
+function triggerBoot() {
+    bootSound.currentTime = 0;
+    bootSound.play().catch(() => {});
+    if (navigator.vibrate) navigator.vibrate([40, 50, 40]); // Heavy double rumble
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Apply CRT Overlay dynamically
+    const crt = document.createElement('div');
+    crt.classList.add('crt-overlay');
+    document.body.appendChild(crt);
+
     // --- SOPHISTICATED BOOT SPLASH ---
     const initBtn = document.getElementById('init-btn');
     const splashScreen = document.getElementById('splash-screen');
@@ -28,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initBtn.addEventListener('click', async () => {
             if (isBooting) return;
             isBooting = true;
-            bootSound.play().catch(() => {}); 
+            triggerBoot(); 
             
             initBtn.style.display = 'none'; 
             if (bootHud) bootHud.style.display = 'flex';
@@ -117,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!lockInput) return;
             const val = lockInput.value.trim();
             if (!val) return;
-            clickSound.play().catch(() => {});
+            triggerClick();
 
             if (!savedPin) {
                 localStorage.setItem('efect_master_key', val);
@@ -157,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const shareBtn = document.getElementById('share-btn');
     if (shareBtn) {
         shareBtn.addEventListener('click', async () => {
+            triggerClick();
             if (navigator.share) {
                 try {
                     await navigator.share({
@@ -188,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         consoleUI.addEventListener('submit', function (e) {
             e.preventDefault(); 
+            triggerClick();
             const code = cmdInput.value.toLowerCase().replace(/\s+/g, '');
             
             if (code === 'efect.lit') {
@@ -210,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
-            clickSound.play().catch(() => {});
+            triggerClick();
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.style.display = 'flex';
@@ -224,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModal('btn-fps-preview', 'fps-modal');
 
     document.getElementById('close-modal')?.addEventListener('click', () => {
+        triggerClick();
         const pm = document.getElementById('preview-modal');
         if (pm) pm.style.opacity = '0';
         document.getElementById('macro-vid')?.pause();
@@ -231,18 +252,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('close-fps-modal')?.addEventListener('click', () => {
+        triggerClick();
         const fm = document.getElementById('fps-modal');
         if (fm) fm.style.opacity = '0';
         setTimeout(() => { if (fm) fm.style.display = 'none'; }, 300);
     });
 
     document.getElementById('btn-hub')?.addEventListener('click', () => {
-        clickSound.play().catch(() => {});
+        triggerClick();
         window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
     });
 
     document.getElementById('btn-maps')?.addEventListener('click', () => {
-        clickSound.play().catch(() => {});
+        triggerClick();
         window.open('https://fortnite.gg/creator/efect.lit', '_blank');
     });
 });
