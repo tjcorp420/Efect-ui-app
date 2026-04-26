@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const splashScreen = document.getElementById('splash-screen');
     const splashTerminal = document.getElementById('splash-terminal');
     const loaderBar = document.getElementById('loader-bar');
+    const lockScreen = document.getElementById('lock-screen');
 
     if(initBtn) {
         initBtn.addEventListener('click', async () => {
@@ -42,18 +43,83 @@ document.addEventListener('DOMContentLoaded', () => {
                     loaderBar.style.width = `${(bootIdx / 6) * 100}%`;
                 } else {
                     clearInterval(bootInterval);
+                    // Fade out splash screen and show Lock Screen
                     setTimeout(() => {
                         splashScreen.style.opacity = '0';
                         setTimeout(() => {
                             splashScreen.remove();
-                            typeWriter(); 
-                            initDiagnostics(); 
-                            fetchGitHubUpdates(); // PULL LIVE REPO DATA
+                            initLockScreen(); // TRIGGERS NEW SECURE LOCK
                         }, 500);
                     }, 600);
                 }
             }, 300);
         });
+    }
+
+    // --- SECURE LOCK SCREEN LOGIC ---
+    function initLockScreen() {
+        lockScreen.style.display = 'flex';
+        setTimeout(() => { lockScreen.style.opacity = '1'; }, 10);
+
+        const savedPin = localStorage.getItem('efect_master_key');
+        const lockTitle = document.getElementById('lock-title');
+        const lockSubtitle = document.getElementById('lock-subtitle');
+        const lockInput = document.getElementById('lock-input');
+        const lockBtn = document.getElementById('lock-btn');
+        const lockError = document.getElementById('lock-error');
+
+        // State 1: First time user
+        if (!savedPin) {
+            lockTitle.innerText = "INITIAL SETUP";
+            lockSubtitle.innerText = "Create a new Master Key to encrypt your hub.";
+            lockBtn.innerText = "REGISTER KEY";
+        } 
+        // State 2: Returning user
+        else {
+            lockTitle.innerText = "SYSTEM LOCKED";
+            lockSubtitle.innerText = "Enter your Master Key to proceed.";
+            lockBtn.innerText = "AUTHENTICATE";
+        }
+
+        lockBtn.addEventListener('click', () => {
+            const val = lockInput.value.trim();
+            if(!val) return;
+            sound1.play();
+
+            if (!savedPin) {
+                // Register new password
+                localStorage.setItem('efect_master_key', val);
+                unlockSystem();
+            } else {
+                // Verify returning password
+                if (val === savedPin) {
+                    unlockSystem();
+                } else {
+                    lockError.style.display = 'block';
+                    lockInput.value = ''; // clear input
+                    // Shake animation for error
+                    lockScreen.querySelector('.modal-content').style.transform = 'translateX(-10px)';
+                    setTimeout(() => lockScreen.querySelector('.modal-content').style.transform = 'translateX(10px)', 100);
+                    setTimeout(() => lockScreen.querySelector('.modal-content').style.transform = 'translateX(0)', 200);
+                }
+            }
+        });
+
+        // Allow pressing Enter on the keyboard
+        lockInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') lockBtn.click();
+        });
+    }
+
+    function unlockSystem() {
+        lockScreen.style.opacity = '0';
+        setTimeout(() => {
+            lockScreen.style.display = 'none';
+            // Start main app features
+            typeWriter(); 
+            initDiagnostics(); 
+            fetchGitHubUpdates();
+        }, 400);
     }
 
     // --- NATIVE IOS SHARE BUTTON ---
@@ -69,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 } catch (err) { console.log('Share dismissed'); }
             } else {
-                // Fallback for non-mobile devices
                 navigator.clipboard.writeText(window.location.href);
                 alert("Link copied to clipboard!");
             }
@@ -137,32 +202,43 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-maps')?.addEventListener('click', () => window.open('https://fortnite.gg/creator/efect.lit', '_blank'));
 });
 
-// --- GITHUB API LIVE FETCH (PROFILE-WIDE) ---
+// --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
 async function fetchGitHubUpdates() {
+    const ghUpdateElement = document.getElementById('gh-update');
+    const cachedData = localStorage.getItem('efect_gh_update');
+    const cacheTime = localStorage.getItem('efect_gh_time');
+    
+    if (cachedData && cacheTime && (Date.now() - cacheTime < 300000)) {
+        ghUpdateElement.innerHTML = cachedData;
+        return;
+    }
+
     try {
-        // Fetches all recent activity across your entire GitHub profile
         const response = await fetch('https://api.github.com/users/tjcorp420/events/public');
+        if (response.status === 403) {
+            if (cachedData) ghUpdateElement.innerHTML = cachedData; 
+            else ghUpdateElement.innerHTML = `<i class="fa-solid fa-shield-halved"></i> GITHUB API RATE LIMIT: STANDING BY...`;
+            return;
+        }
+
         const events = await response.json();
+        const lastPush = events.find(event => event.type === 'PushEvent' && event.payload && event.payload.commits && event.payload.commits.length > 0);
         
-        // Searches for the most recent time you pushed code to ANY repository
-        const lastPush = events.find(event => event.type === 'PushEvent');
-        
-        if(lastPush && lastPush.payload.commits.length > 0) {
-            // Cleans up the repo name (e.g., turns "tjcorp420/EFECT-AIM-TRAINER" into "EFECT AIM TRAINER")
-            let repoName = lastPush.repo.name.split('/')[1];
-            repoName = repoName.replace(/-/g, ' '); 
-            
+        if(lastPush) {
+            let repoName = lastPush.repo.name.split('/')[1].replace(/-/g, ' '); 
             const commitDate = new Date(lastPush.created_at).toLocaleDateString();
             const commitMessage = lastPush.payload.commits[0].message;
-            
-            // Displays: LATEST UPDATE [REPO NAME] (DATE): MESSAGE
-            document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-code-commit"></i> LATEST UPDATE [${repoName}] (${commitDate}): ${commitMessage}`;
+            const finalHTML = `<i class="fa-solid fa-code-commit"></i> LATEST UPDATE [${repoName}] (${commitDate}): ${commitMessage}`;
+            ghUpdateElement.innerHTML = finalHTML;
+            localStorage.setItem('efect_gh_update', finalHTML);
+            localStorage.setItem('efect_gh_time', Date.now());
+        } else {
+            ghUpdateElement.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> SCANNING FOR NEW EFECT UPDATES...`;
         }
     } catch (error) {
-        document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-satellite-dish"></i> GITHUB LINK ACTIVE`;
+        ghUpdateElement.innerHTML = `<i class="fa-solid fa-satellite-dish"></i> GITHUB LINK SECURED`;
     }
 }
-
 
 // --- REAL HARDWARE DIAGNOSTICS ---
 function initDiagnostics() {
