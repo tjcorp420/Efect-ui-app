@@ -12,12 +12,12 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
-    <div id="command-console">
+    <form id="command-console">
         <input type="text" id="cmd-input" placeholder="Enter override code..." autocomplete="off">
-    </div>
+    </form>
 
     <div id="splash-screen">
         <img src="logo.png" alt="EFECT Logo" class="splash-logo">
@@ -32,7 +32,7 @@
         <div class="modal-content glass-card">
             <span class="close-btn" id="close-modal">&times;</span>
             <h2 style="color: #00ff00; margin-top: 0;">Live Macro Preview</h2>
-            <video id="macro-vid" controls autoplay loop playsinline muted>
+            <video id="macro-vid" controls loop playsinline muted>
                 <source src="preview.mp4" type="video/mp4">
             </video>
             <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro</a>
@@ -57,6 +57,12 @@
             <p class="subtitle">System Optimization, Macro Engine & Custom Arenas</p>
             <div id="terminal-log" class="terminal-log"></div>
         </header>
+
+        <div id="diag-panel" class="glass-card">
+            <div class="diag-item"><i class="fa-solid fa-battery-three-quarters"></i> <span id="batt-level">SCAN...</span></div>
+            <div class="diag-item"><i class="fa-solid fa-wifi"></i> <span id="net-status">SCAN...</span></div>
+            <div class="diag-item"><i class="fa-solid fa-microchip"></i> <span id="proc-load">EFECT: ACTIVE</span></div>
+        </div>
         
         <div class="card-container">
             <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">

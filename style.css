@@ -312,6 +312,7 @@ h1:hover, h1:active {
     0% { transform: scale(1) translate(0, 0); opacity: 1; }
     100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
 }
+
 /* --- LOADING BAR STYLES --- */
 #loader-wrapper {
     width: 80%;
@@ -332,39 +333,6 @@ h1:hover, h1:active {
     transition: width 0.2s ease;
 }
 
-/* --- COMMAND CONSOLE OVERLAY --- */
-#command-console {
-    position: fixed;
-    top: -100px; /* Hidden off the top of the screen */
-    left: 0;
-    width: 100vw;
-    height: 80px;
-    background: rgba(5, 5, 5, 0.95);
-    border-bottom: 2px solid #00ff00;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy slide down */
-    z-index: 100000; 
-    backdrop-filter: blur(10px);
-}
-
-#cmd-input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #00ff00;
-    color: #00ff00;
-    font-family: 'Fira Code', monospace;
-    font-size: 1rem;
-    width: 80%;
-    outline: none;
-    text-align: center;
-    padding-bottom: 5px;
-}
-
-#cmd-input::placeholder {
-    color: rgba(0, 255, 0, 0.3);
-}
 /* --- MODAL POPUP STYLES --- */
 .modal-overlay {
     position: fixed;
@@ -383,7 +351,7 @@ h1:hover, h1:active {
     width: 90%;
     max-width: 450px;
     max-height: 85vh;
-    overflow-y: auto; /* Lets them scroll if the screen is small */
+    overflow-y: auto; 
     position: relative;
     padding: 1.5rem;
     text-align: center;
@@ -425,7 +393,6 @@ h1:hover, h1:active {
     animation: pulseGlow 2s infinite alternate;
 }
 
-/* Secondary Button Style */
 .secondary-btn {
     margin-top: 10px;
     border-color: rgba(0, 255, 0, 0.4);
@@ -436,4 +403,72 @@ h1:hover, h1:active {
     background: rgba(0, 255, 0, 0.2);
     color: #fff;
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* --- FIXED COMMAND CONSOLE OVERLAY (Now a Form) --- */
+form#command-console {
+    position: fixed;
+    top: -100px; 
+    left: 0;
+    width: 100vw;
+    height: 80px;
+    background: rgba(5, 5, 5, 0.95);
+    border-bottom: 2px solid #00ff00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    z-index: 100000; 
+    backdrop-filter: blur(10px);
+    margin: 0;
+}
+
+form#command-console #cmd-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    width: 80%;
+    outline: none;
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+form#command-console #cmd-input::placeholder {
+    color: rgba(0, 255, 0, 0.3);
+}
+
+/* --- DIAGNOSTIC PANEL STYLES --- */
+#diag-panel {
+    width: 90%;
+    max-width: 630px;
+    margin: 0 auto 2rem;
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-color: rgba(0, 255, 0, 0.3);
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #888;
+}
+
+.diag-item span {
+    color: #00ff00;
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    margin-left: 5px;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+/* --- MATRIX MODE CANVAS --- */
+canvas#matrix-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -2;
+    display: none;
 }
