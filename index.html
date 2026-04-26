@@ -9,52 +9,56 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050505">
     <link rel="apple-touch-icon" href="icon.png">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
 
+        /* --- GLOBAL FIXES --- */
         body, html {
-            margin: 0; padding: 0; background-color: #020202; color: #fff;
-            font-family: 'Fira Code', monospace; min-height: 100vh; overflow-x: hidden;
-            cursor: crosshair; overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; width: 100vw; max-width: 100%; min-height: 100vh;
+            background-color: #050505; color: #fff; font-family: 'Fira Code', monospace; 
+            overflow-x: hidden; cursor: crosshair; overscroll-behavior-y: none; 
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* --- BACKGROUNDS & ANIMATED GALAXY --- */
         .background-grid {
             position: fixed; top: -5%; left: -5%; width: 110vw; height: 110vh;
             background-image: linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px; z-index: -2; pointer-events: none;
+            background-size: 40px 40px; z-index: -2; pointer-events: none; transition: transform 0.1s ease-out;
         }
         
         .galaxy-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; pointer-events: none; overflow: hidden; }
-        .galaxy-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at center, #0a0f0a 0%, #020202 100%); }
+        .galaxy-bg { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at center, #081208 0%, #000000 100%); }
         .galaxy-stars-1 {
             position: absolute; width: 250%; height: 250%; top: -75%; left: -75%;
             background-image: 
-                radial-gradient(2px 2px at 10% 20%, rgba(0,255,0,0.8), transparent), 
+                radial-gradient(2.5px 2.5px at 10% 20%, rgba(0,255,0,0.9), transparent), 
                 radial-gradient(2px 2px at 25% 45%, rgba(255,255,255,0.7), transparent),
-                radial-gradient(3px 3px at 40% 10%, rgba(0,255,0,0.5), transparent),
-                radial-gradient(2px 2px at 60% 80%, rgba(255,255,255,0.6), transparent),
-                radial-gradient(1.5px 1.5px at 80% 30%, rgba(0,255,0,0.9), transparent),
-                radial-gradient(2.5px 2.5px at 90% 70%, rgba(255,255,255,0.8), transparent),
-                radial-gradient(3px 3px at 50% 50%, rgba(0,255,0,0.4), transparent),
-                radial-gradient(2px 2px at 15% 85%, rgba(0,255,0,0.7), transparent),
-                radial-gradient(1px 1px at 75% 15%, rgba(255,255,255,0.9), transparent);
+                radial-gradient(3px 3px at 40% 10%, rgba(0,255,0,0.6), transparent),
+                radial-gradient(2.5px 2.5px at 60% 80%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1.5px 1.5px at 80% 30%, rgba(0,255,0,1), transparent),
+                radial-gradient(3px 3px at 50% 50%, rgba(0,255,0,0.5), transparent);
             background-size: 250px 250px; 
             animation: rotateGalaxy 120s linear infinite;
         }
         @keyframes rotateGalaxy { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN (CENTERING FIXES) --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #020202; z-index: 99999; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; transition: opacity 0.5s ease;
         }
-        .scanner-container { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2rem; z-index: 5; pointer-events: none; }
-        .splash-logo { width: 80%; max-width: 250px; filter: drop-shadow(0 0 25px rgba(0, 255, 0, 0.8)); animation: pulseGlow 2s infinite alternate;}
-        @keyframes pulseGlow { 0% { filter: drop-shadow(0 0 15px rgba(0,255,0,0.5)); } 100% { filter: drop-shadow(0 0 35px rgba(0,255,0,1)); } }
+        
+        .scanner-container { 
+            position: relative; display: flex; justify-content: center; align-items: center; 
+            width: 100%; margin-bottom: 2rem; z-index: 5; pointer-events: none; 
+        }
+        .splash-logo { width: 70%; max-width: 250px; filter: drop-shadow(0 0 25px rgba(0, 255, 0, 0.8)); animation: pulseGlow 2s infinite alternate;}
+        @keyframes pulseGlow { 0% { filter: drop-shadow(0 0 10px rgba(0,255,0,0.4)); } 100% { filter: drop-shadow(0 0 30px rgba(0,255,0,1)); } }
         
         .scanner-line {
             position: absolute; top: 0; left: 0; width: 100%; height: 2px;
@@ -63,42 +67,40 @@
         }
         @keyframes scanLine { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
 
-        #splash-terminal { color: #00ff00; font-family: 'Fira Code', monospace; font-size: 0.85rem; margin-bottom: 2rem; opacity: 0.8; text-align: center; }
+        #splash-terminal { color: #00ff00; font-size: 0.85rem; margin-bottom: 2rem; text-align: center; }
         #init-btn { width: 80%; max-width: 250px; position: relative; z-index: 100000; }
         
         #loader-wrapper { 
-            width: 80%; max-width: 250px; height: 12px; 
-            background: rgba(0, 0, 0, 0.5); border: 1px solid #00ff00; 
-            border-radius: 4px; padding: 2px; margin-top: 1rem; box-sizing: border-box;
+            width: 80%; max-width: 250px; height: 8px; background: rgba(0, 0, 0, 0.5); 
+            border: 1px solid #00ff00; border-radius: 4px; padding: 2px; margin-top: 1rem; 
         }
         #loader-bar { width: 0%; height: 100%; background: #00ff00; box-shadow: 0 0 10px #00ff00; transition: width 0.2s ease; border-radius: 2px; }
 
-        /* --- MAIN UI STYLES --- */
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; text-align: center; position: relative; z-index: 10; }
+        /* --- MAIN UI & CARDS --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; text-align: center; position: relative; z-index: 10; }
         header { margin-top: 1rem; margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center; }
         .main-logo { max-width: 280px; margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(0, 255, 0, 0.4)); }
-        h1 { color: #00ff00; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); min-height: 40px; margin: 0; font-size: 1.5rem; }
+        h1 { color: #00ff00; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); margin: 0; font-size: 1.5rem; }
         .subtitle { color: #888; margin-top: 1rem; font-size: 0.9rem; }
         .terminal-log { font-size: 0.8rem; color: #00ff00; opacity: 0.7; height: 1.5rem; margin-bottom: 1.5rem; }
 
-        /* --- DIAGNOSTIC PANEL --- */
-        #diag-panel { width:90%; max-width:630px; margin:0 auto 2rem; display:flex; flex-direction:row; justify-content:space-around; padding:15px; border: 1px solid rgba(0, 255, 0, 0.2); border-radius: 12px; background: rgba(0,255,0,0.05); backdrop-filter: blur(10px); }
+        #diag-panel { width:95%; max-width:630px; margin:0 auto 2rem; display:flex; flex-direction:row; justify-content:space-around; padding:15px 5px; border: 1px solid rgba(0, 255, 0, 0.2); border-radius: 12px; background: rgba(0,255,0,0.05); backdrop-filter: blur(10px); }
         .diag-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: bold; color: #00ff00; }
 
-        /* --- CARDS --- */
         .card-container { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; padding-bottom: 4rem; }
         .glass-card {
             background: linear-gradient(145deg, rgba(0,255,0,0.05) 0%, rgba(0,0,0,0) 100%); backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 0, 0.2); border-radius: 12px; padding: 1.5rem; width: 290px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transition: 0.3s; display: flex; flex-direction: column; text-align: left;
+            border: 1px solid rgba(0, 255, 0, 0.2); border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 320px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transition: 0.3s; display: flex; flex-direction: column; text-align: left; box-sizing: border-box;
         }
+        
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
         .icon-wrapper { font-size: 1.5rem; color: #00ff00; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
         .status { font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 20px; }
         .status.online { background: rgba(0, 255, 0, 0.1); color: #00ff00; border: 1px solid rgba(0, 255, 0, 0.3); }
         .status.dev { background: rgba(255, 51, 51, 0.1); color: #ff3333; border: 1px solid rgba(255, 51, 51, 0.3); }
         .dot { width: 6px; height: 6px; border-radius: 50%; background-color: #00ff00; box-shadow: 0 0 5px #00ff00; animation: blink 2s infinite; }
-        .status.dev .dot { background-color: #ff3333; box-shadow: 0 0 5px #ff3333; }
+        .status.dev .dot { background-color: #ff3333; box-shadow: 0 0 5px #ff3333; animation: none;}
         @keyframes blink { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
         
         .glass-card h2 { color: #fff; font-size: 1.2rem; margin: 0 0 0.5rem 0; }
@@ -106,69 +108,75 @@
         .glass-card.locked { background: linear-gradient(145deg, rgba(255,0,0,0.05) 0%, rgba(0,0,0,0) 100%); border-color: rgba(255, 0, 0, 0.2); }
         .glass-card.locked .icon-wrapper { color: #ff3333; text-shadow: 0 0 10px rgba(255, 51, 51, 0.5); }
         
+        /* --- BUTTONS --- */
         .btn-stack { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
-        
         .neon-btn {
             display: flex; align-items: center; justify-content: center; box-sizing: border-box; background: transparent; 
             color: #00ff00; border: 1px solid #00ff00; padding: 0.8rem; font-family: 'Fira Code', monospace; 
             font-size: 0.9rem; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; 
-            text-align: center; width: 100%; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 255, 0, 0.1); 
-            position: relative; z-index: 10; text-decoration: none;
+            width: 100%; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 255, 0, 0.1); 
+            position: relative; z-index: 10; text-decoration: none; touch-action: manipulation;
         }
         .neon-btn:active { background: #00ff00; color: #000; box-shadow: 0 0 20px #00ff00; transform: scale(0.98); }
         .secondary-btn { border-color: rgba(0, 255, 0, 0.5); color: rgba(0, 255, 0, 0.8); }
         .neon-btn.disabled { color: #ff3333; border-color: #ff3333; opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
-        /* --- MODALS --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 100000; display: none; justify-content: center; align-items: center; opacity: 0; transition: 0.3s; }
-        .modal-content { width: 90%; max-width: 450px; max-height: 85vh; overflow-y: auto; position: relative; padding: 2rem 1.5rem; border: 1px solid #00ff00; box-shadow: 0 0 40px rgba(0, 255, 0, 0.2); background: rgba(10,10,10,0.95); border-radius: 8px;}
-        .close-hitbox { position: absolute; top: 0; right: 0; width: 60px; height: 60px; display: flex; align-items: flex-start; justify-content: flex-end; padding: 15px; cursor: pointer; z-index: 100; }
-        .close-btn { color: #00ff00; font-size: 2.5rem; line-height: 1; text-shadow: 0 0 10px rgba(0,255,0,0.5); pointer-events: none; }
-
-        /* --- CONSOLE & NOTIFICATIONS --- */
+        /* --- NOTIFICATIONS, CONSOLE & SHARE (FIXED OVERLAPS) --- */
         #share-btn { 
-            position: fixed; bottom: 45px; right: 20px; z-index: 100005; 
+            position: fixed; top: 20px; right: 20px; z-index: 100000; 
             background: rgba(0,0,0,0.8); border: 1px solid #00ff00; border-radius: 50%; 
-            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 15px rgba(0,255,0,0.3); font-size: 1.2rem; cursor: pointer;
+            width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 15px rgba(0,255,0,0.3); font-size: 1.2rem; cursor: pointer; color: #00ff00;
         } 
 
         form#command-console {
-            position: fixed; top: -140px; left: 0; width: 100vw; height: 120px;
+            position: fixed; top: -140px; left: 0; width: 100vw; height: 110px;
             background: rgba(5, 5, 5, 0.98); border-bottom: 2px solid #00ff00;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100010; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100010; 
             box-shadow: 0 5px 30px rgba(0,255,0,0.3); backdrop-filter: blur(10px);
         }
-        #cmd-input { background: transparent; border: none; border-bottom: 1px dashed #00ff00; color: #00ff00; font-size: 1.2rem; width: 80%; text-align: center; outline: none; padding: 10px 0; margin-top: 15px;}
-        #close-console { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); background: #00ff00; color: #000; padding: 2px 15px; border-radius: 0 0 8px 8px; font-weight: bold; font-size: 0.8rem; cursor: pointer;}
+        #cmd-input { background: transparent; border: none; border-bottom: 1px dashed #00ff00; color: #00ff00; font-size: 1.2rem; width: 80%; text-align: center; outline: none; padding: 5px 0; margin-top: 10px;}
 
         #sys-noti {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: rgba(0,255,0,0.15); border: 1px solid #00ff00; color: #00ff00;
             padding: 12px 25px; border-radius: 4px; font-weight: bold; font-size: 0.9rem;
-            box-shadow: 0 0 20px rgba(0,255,0,0.5); z-index: 100000; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(0,255,0,0.5); z-index: 100000; transition: top 0.4s ease;
             backdrop-filter: blur(5px); text-align: center; width: max-content;
         }
-        #sys-noti.show { top: 130px; } 
+        #sys-noti.show { top: 125px; } /* Drops just below the console */
 
         #sales-toast {
-            position: fixed; bottom: 50px; right: -350px; width: 260px;
+            position: fixed; bottom: 50px; right: -350px; width: 260px; max-width: 80%;
             background: rgba(5,5,5,0.95); border: 1px solid #00ff00; border-right: none; border-left: 4px solid #00ff00;
-            padding: 15px 20px; border-radius: 8px 0 0 8px; z-index: 100001; transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 15px 20px; border-radius: 8px 0 0 8px; z-index: 100001; transition: right 0.5s ease;
             display: flex; gap: 15px; align-items: center; box-shadow: -5px 0 30px rgba(0,255,0,0.3);
         }
         #sales-toast.show { right: 0px; }
-        
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 100005; display: none; justify-content: center; align-items: center; opacity: 0; transition: 0.3s; }
+        .modal-content { width: 90%; max-width: 400px; max-height: 85vh; overflow-y: auto; position: relative; padding: 2rem 1.5rem; border: 1px solid #00ff00; box-shadow: 0 0 40px rgba(0, 255, 0, 0.2); background: rgba(10,10,10,0.95); border-radius: 8px;}
+        .close-hitbox { position: absolute; top: 0; right: 0; width: 60px; height: 60px; display: flex; align-items: flex-start; justify-content: flex-end; padding: 15px; cursor: pointer; z-index: 100; }
+        .close-btn { color: #00ff00; font-size: 2.5rem; line-height: 1; text-shadow: 0 0 10px rgba(0,255,0,0.5); pointer-events: none; }
+        .modal-img, #macro-vid { width: 100%; border-radius: 8px; border: 1px solid rgba(0, 255, 0, 0.3); margin-top: 1rem; margin-bottom: 1rem; background: #000; }
+
+        /* --- TICKER & PARTICLES --- */
         #ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100vw; height: 30px; background: rgba(5, 5, 5, 0.95); border-top: 1px solid rgba(0, 255, 0, 0.3); display: flex; align-items: center; overflow: hidden; z-index: 9999; }
         #ticker-text { display: flex; white-space: nowrap; animation: scrollTicker 20s linear infinite; font-size: 0.75rem; font-weight: bold; color: #00ff00; }
         .ticker-item { margin-right: 50px; text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); display: flex; align-items: center; gap: 8px; }
         @keyframes scrollTicker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+        .particle { position: absolute; width: 4px; height: 4px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 8px #00ff00; pointer-events: none; animation: explode 0.6s ease-out forwards; z-index: 99999; }
+        @keyframes explode { 0% { transform: scale(1) translate(0, 0); opacity: 1; } 100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; } }
     </style>
 </head>
 <body>
-    <div id="sys-noti">SYSTEM OVERRIDE ACCEPTED</div>
 
-    <div id="share-btn" class="icon-wrapper">
+    <div id="sys-noti">SYSTEM OVERRIDE ACCEPTED</div>
+    
+    <div id="share-btn">
         <i class="fa-solid fa-arrow-up-from-bracket"></i>
     </div>
 
@@ -176,14 +184,13 @@
         <div class="toast-icon" style="color:#00ff00; font-size: 1.5rem;"><i class="fa-solid fa-satellite-dish"></i></div>
         <div class="toast-text">
             <h4 style="letter-spacing: 1px; color:#00ff00; margin:0 0 5px 0; text-shadow: 0 0 8px #00ff00;">SECURE CHECKOUT</h4>
-            <p id="sale-desc" style="margin:0; font-size:0.8rem; color:#ccc;">Incoming data...</p>
+            <p id="sale-desc" style="margin:0; font-size:0.75rem; color:#ccc;">Incoming data...</p>
         </div>
     </div>
 
     <form id="command-console">
         <span style="color:#00ff00; font-size:0.7rem; opacity:0.7;">> ROOT ACCESS TERMINAL</span>
         <input type="text" id="cmd-input" placeholder="Enter override code..." autocomplete="off">
-        <div id="close-console">CLOSE TRAY</div>
     </form>
 
     <div id="splash-screen">
@@ -199,12 +206,12 @@
         </div>
     </div>
 
-    <div id="lock-screen" class="modal-overlay" style="background-color: #020202; z-index: 99998;">
+    <div id="lock-screen" class="modal-overlay" style="background-color: #020202;">
         <div class="modal-content glass-card" style="display: flex; flex-direction: column; align-items: center; border-color: #00ff00;">
             <i class="fa-solid fa-lock" style="font-size: 2.5rem; color: #00ff00; margin-bottom: 1rem; text-shadow: 0 0 15px #00ff00;"></i>
             <h2 id="lock-title" style="color: #00ff00; margin-top: 0;">SYSTEM LOCKED</h2>
             <p id="lock-subtitle" style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem; text-align: center;">Enter Master Key to access the EFECT Hub.</p>
-            <input type="password" id="lock-input" placeholder="***" style="background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #00ff00; padding: 10px; text-align: center; font-family: 'Fira Code', monospace; width: 80%; margin-bottom: 1rem; border-radius: 4px; outline: none; font-size: 1.5rem; letter-spacing: 8px;">
+            <input type="password" id="lock-input" placeholder="***" style="background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #00ff00; padding: 10px; text-align: center; width: 80%; margin-bottom: 1rem; border-radius: 4px; outline: none; font-size: 1.5rem; letter-spacing: 8px;">
             <button id="lock-btn" class="neon-btn" style="width: 80%;">AUTHENTICATE</button>
             <p id="lock-error" style="color: #ff3333; font-size: 0.8rem; margin-top: 15px; display: none; font-weight: bold;">> ERROR: ACCESS DENIED</p>
         </div>
@@ -214,10 +221,10 @@
         <div class="modal-content glass-card">
             <div class="close-hitbox"><span class="close-btn">&times;</span></div>
             <h2 style="color: #00ff00; margin-top: 0;">Live Macro Preview</h2>
-            <video id="macro-vid" controls loop playsinline muted style="width:100%; border:1px solid #00ff00; border-radius:8px; margin-bottom:1rem;">
+            <video id="macro-vid" controls loop playsinline muted>
                 <source src="preview.mp4" type="video/mp4">
             </video>
-            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn" onclick="triggerClick()">Get Efect Pro Macro</a>
+            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn" onclick="triggerClick()">Get Efect Pro Macro</a>
         </div>
     </div>
 
@@ -225,8 +232,8 @@
         <div class="modal-content glass-card" style="border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,0.2);">
             <div class="close-hitbox"><span class="close-btn" style="color:#fff;">&times;</span></div>
             <h2 style="color: #fff; margin-top: 0; text-shadow: 0 0 10px #fff;">FPS Booster UI</h2>
-            <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff; width:100%; border-radius:8px;">
-            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="background: #fff; color: #000; border: none; margin-top:1rem;" onclick="triggerClick()">Get Efect FPS Booster</a>
+            <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff;">
+            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="background: #fff; color: #000; border: none;" onclick="triggerClick()">Get Efect FPS Booster</a>
         </div>
     </div>
 
@@ -265,7 +272,7 @@
     <div class="container">
         <header>
             <img src="logo.png" alt="EFECT Logo" class="main-logo">
-            <h1 id="typewriter" class="glitch-hover"></h1>
+            <h1 id="typewriter"></h1>
             <p class="subtitle">System Optimization, Macro Engine & Custom Arenas</p>
             <div id="terminal-log" class="terminal-log"></div>
         </header>
@@ -293,7 +300,7 @@
             <div id="secret-fps-card" class="glass-card" style="display: none; border-color: #fff;">
                 <div class="card-header">
                     <div class="icon-wrapper" style="color:#fff;"><i class="fa-solid fa-gauge-high"></i></div>
-                    <span class="status online" style="color: #fff; background: rgba(255,255,255,0.2); border-color: #fff;"><span class="dot" style="background:#fff; box-shadow: 0 0 5px #fff;"></span> OVERCLOCKED</span>
+                    <span class="status online" style="color: #fff; background: rgba(255,255,255,0.2); border-color: #fff;"><span class="dot" style="background:#fff; box-shadow: 0 0 5px #fff; animation: none;"></span> OVERCLOCKED</span>
                 </div>
                 <h2 style="color: #fff;">Efect FPS Booster</h2>
                 <p style="color: #ccc;">Maximum frame rate unlocked. Background processes terminated.</p>
@@ -310,7 +317,9 @@
                 </div>
                 <h2>Efect Fortnite Maps</h2>
                 <p>Official custom maps, precision aim trainers, and competitive practice arenas.</p>
-                <a href="https://fortnite.gg/creator/efect.lit" target="_blank" class="neon-btn" onclick="triggerClick()">View Maps</a>
+                <div class="btn-stack">
+                    <a href="https://fortnite.gg/creator/efect.lit" target="_blank" class="neon-btn" onclick="triggerClick()">View Maps</a>
+                </div>
             </div>
 
             <div class="glass-card">
@@ -321,7 +330,9 @@
                 <h2>Synergy Calculator</h2>
                 <p>Analyze your hardware & settings to find your true latency potential.</p>
                 <p style="color: #00ff00; font-family: monospace; font-weight: bold;">SCORE: <span id="card-synergy-score">--</span></p>
-                <button id="btn-synergy" class="neon-btn">LAUNCH ANALYZER</button>
+                <div class="btn-stack">
+                    <button id="btn-synergy" class="neon-btn">LAUNCH ANALYZER</button>
+                </div>
             </div>
             
             <div id="hw-monitor-card" class="glass-card locked">
@@ -331,8 +342,10 @@
                 </div>
                 <h2>Efect Hardware Monitor</h2>
                 <p>Real-time telemetry and core-locking utility for ultimate system stability.</p>
-                <div id="live-ping" style="color: #00ff00; font-size: 0.85rem; margin-bottom: 15px; font-weight: bold;">Simulated Latency: -- ms</div>
-                <button id="btn-hw-monitor" class="neon-btn disabled" disabled>LOCKED</button>
+                <div id="live-ping" style="color: #00ff00; font-size: 0.85rem; margin-bottom: 15px; font-weight: bold; font-family: monospace;">Simulated Latency: -- ms</div>
+                <div class="btn-stack">
+                    <button id="btn-hw-monitor" class="neon-btn disabled" disabled>LOCKED</button>
+                </div>
             </div>
         </div>
     </div>
@@ -347,14 +360,13 @@
 
     <script>
         // --- BULLETPROOF AUDIO ENGINE ---
-        // Names match your exact files. Force preload so there is zero delay.
-        const bootSound = new Audio('boot.mp3');
-        const clickSound = new Audio('click.mp3');
+        // Your files are named exactly efectboot.mp3 and sound1.mp3 based on your request.
+        const bootSound = new Audio('efectboot.mp3');
+        const clickSound = new Audio('sound1.mp3');
         bootSound.preload = 'auto';
         clickSound.preload = 'auto';
 
         function triggerClick() {
-            // Play click sound strictly on demand
             clickSound.currentTime = 0;
             let playPromise = clickSound.play();
             if (playPromise !== undefined) {
@@ -380,18 +392,31 @@
             const loaderBar = document.getElementById('loader-bar');
 
             if(initBtn) {
-                initBtn.addEventListener('click', function(e) {
-                    // DIRECT USER INTERACTION: Boot sound will play here safely.
+                // FIXED: Direct sync interaction to guarantee audio plays
+                initBtn.addEventListener('click', function() {
+                    
+                    // 1. PLAY AUDIO IMMEDIATELY (No Async/Await delays)
                     bootSound.currentTime = 0;
                     let playPromise = bootSound.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(error => { console.log("Boot sound blocked by browser:", error); });
                     }
-                    if (navigator.vibrate) navigator.vibrate(25);
+                    if (navigator.vibrate) navigator.vibrate([40, 50, 40]);
                     
+                    // 2. Hide Button & Start Loader
                     initBtn.style.display = 'none'; 
                     document.getElementById('loader-wrapper').style.display = 'block';
 
+                    // 3. Ask for Gyro AFTER audio triggers
+                    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                        DeviceOrientationEvent.requestPermission()
+                            .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', handleGyro); })
+                            .catch(console.error);
+                    } else {
+                        window.addEventListener('deviceorientation', handleGyro);
+                    }
+
+                    // 4. Boot Animation
                     let bootIdx = 0;
                     const bootInterval = setInterval(() => {
                         if (bootIdx < 6) {
@@ -460,7 +485,6 @@
             // --- ADVANCED COMMAND CONSOLE SLIDE LOGIC ---
             const consoleUI = document.getElementById('command-console');
             const cmdInput = document.getElementById('cmd-input');
-            const closeBtn = document.getElementById('close-console');
             let startY = 0;
 
             document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
@@ -473,11 +497,12 @@
                 }
             });
 
-            closeBtn.addEventListener('click', () => { triggerClick(); closeConsole(); });
             function closeConsole() { consoleUI.style.top = '-140px'; cmdInput.blur(); }
 
             consoleUI.addEventListener('submit', function (e) {
-                e.preventDefault(); triggerClick();
+                e.preventDefault(); 
+                triggerClick(); // Trigger sound on submit
+                
                 const code = cmdInput.value.toLowerCase().replace(/\s+/g, '');
                 
                 if (code === 'efect.lit') {
@@ -584,6 +609,11 @@
             }
         }
 
+        function handleGyro(e) {
+            const grid = document.querySelector('.background-grid');
+            if(grid) grid.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
+        }
+
         function startTelemetry() {
             const pingElement = document.getElementById("live-ping");
             if (!pingElement) return;
@@ -597,19 +627,40 @@
             const products = ["Efect Pro Elite", "Efect Macro Engine", "Efect FPS Booster"];
             const l = locs[Math.floor(Math.random() * locs.length)];
             const p = products[Math.floor(Math.random() * products.length)];
-            const ip = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*100)}.xx`;
             
-            document.getElementById('sale-desc').innerHTML = `User from <strong>${l}</strong> secured <strong>${p}</strong><br><span style="color:#00ff00; font-family:monospace; text-shadow:0 0 8px #00ff00;">[IP: ${ip}]</span>`;
+            document.getElementById('sale-desc').innerHTML = `User from <strong>${l}</strong> secured <strong>${p}</strong>`;
             
             toast.classList.add('show');
             
-            // Play click sound when sale pops up IF user has already interacted with page
+            // Play click sound when sale pops up
             let playPromise = clickSound.play();
             if (playPromise !== undefined) playPromise.catch(()=>{});
             
             setTimeout(() => { toast.classList.remove('show'); scheduleNextSale(); }, 6000); 
         }
         function scheduleNextSale() { setTimeout(triggerRandomSale, 25000); }
+
+        // --- PARTICLES ON CLICK ---
+        document.addEventListener('click', e => {
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('.neon-btn') || e.target.closest('#share-btn')) return;
+            
+            // Try to trigger sound on empty clicks
+            let playPromise = clickSound.play();
+            if (playPromise !== undefined) playPromise.catch(()=>{});
+
+            for (let j = 0; j < 8; j++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                document.body.appendChild(p);
+                const angle = Math.random() * Math.PI * 2;
+                const vel = 40 + Math.random() * 60;
+                p.style.left = e.pageX + 'px';
+                p.style.top = e.pageY + 'px';
+                p.style.setProperty('--tx', Math.cos(angle) * vel + 'px');
+                p.style.setProperty('--ty', Math.sin(angle) * vel + 'px');
+                setTimeout(() => p.remove(), 600);
+            }
+        });
     </script>
 </body>
 </html>
