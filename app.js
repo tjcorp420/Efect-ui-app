@@ -265,14 +265,23 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
     });
 
-    // --- SYNERGY CALCULATION LOGIC ---
+        // --- SYNERGY CALCULATION LOGIC ---
     document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
         triggerClick();
-        const gpu = parseInt(document.getElementById('syn-gpu').value);
-        const cpu = parseInt(document.getElementById('syn-cpu').value);
-        const per = parseInt(document.getElementById('syn-per').value);
         
-        const score = Math.floor((gpu * 0.4) + (cpu * 0.4) + (per * 0.2));
+        const gpuSelect = document.getElementById('syn-gpu');
+        const cpuSelect = document.getElementById('syn-cpu');
+        const perSelect = document.getElementById('syn-per');
+        
+        const gpuVal = parseInt(gpuSelect.value);
+        const cpuVal = parseInt(cpuSelect.value);
+        const perVal = parseInt(perSelect.value);
+        
+        // GRABS THE ACTUAL HARDWARE TEXT THE USER CLICKED ON
+        const gpuName = gpuSelect.options[gpuSelect.selectedIndex].text.split(' / ')[0]; 
+        const cpuName = cpuSelect.options[cpuSelect.selectedIndex].text.split(' / ')[0];
+        
+        const score = Math.floor((gpuVal * 0.45) + (cpuVal * 0.40) + (perVal * 0.15));
         
         const resultBox = document.getElementById('syn-result');
         const scoreText = document.getElementById('syn-score-text');
@@ -281,22 +290,37 @@ document.addEventListener('DOMContentLoaded', () => {
         
         resultBox.style.display = 'block';
         scoreText.innerText = "CALC...";
-        adviceText.innerText = "Analyzing hardware polling rates and frame times...";
+        adviceText.innerText = "Scanning hardware strings and calculating dynamic latency limits...";
         
         setTimeout(() => {
             triggerClick(); 
             scoreText.innerText = score;
             if (cardScore) cardScore.innerText = `${score}/100`;
             
-            if (score >= 90) {
-                adviceText.innerText = "Elite hardware detected. Capable of stable 240+ FPS. Run EFECT Macros to bypass OS input latency.";
-            } else if (score >= 70) {
-                adviceText.innerText = "Solid build. CPU might bottleneck in end-games. Use EFECT FPS Booster to lock core threads.";
+            let customFeedback = "";
+            
+            // 1. SMART BOTTLENECK DETECTION
+            if (gpuVal < cpuVal - 15) {
+                customFeedback += `BOTTLENECK DETECTED: Your ${gpuName} is holding back the ${cpuName}. Recommend lowering 3D resolution or upgrading GPU. `;
+            } else if (cpuVal < gpuVal - 15) {
+                customFeedback += `BOTTLENECK DETECTED: Your ${cpuName} is choking your ${gpuName} at 1080p Low. Lock CPU cores with EFECT Optimizer. `;
             } else {
-                adviceText.innerText = "Hardware limits detected. Recommend EFECT Optimizer and setting all Fortnite settings to Performance Mode.";
+                customFeedback += `PERFECT SYNERGY: The ${cpuName} and ${gpuName} are perfectly paired with zero hardware bottleneck. `;
             }
+            
+            // 2. TIER STATUS INJECTION
+            if (score >= 95) {
+                customFeedback += `\n\nSTATUS: Elite Tier. You have raw 0-delay hardware. Inject EFECT Macros for absolute minimum input lag.`;
+            } else if (score >= 75) {
+                customFeedback += `\n\nSTATUS: Competitive Tier. Solid frame times. Ensure your peripheral polling rates are maxed to match the system.`;
+            } else {
+                customFeedback += `\n\nSTATUS: Casual Tier. Heavy optimizations required. Drop all Fortnite settings to Performance Mode and clear standby memory.`;
+            }
+            
+            adviceText.innerText = customFeedback;
         }, 1500);
     });
+
 
     document.getElementById('btn-hub')?.addEventListener('click', () => {
         triggerClick();

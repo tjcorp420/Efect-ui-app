@@ -93,47 +93,54 @@
         </div>
     </div>
 
-    <div id="synergy-modal" class="modal-overlay">
+        <div id="synergy-modal" class="modal-overlay">
         <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 500px;">
             <span class="close-btn" id="close-synergy-modal">&times;</span>
             <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">Hardware Analyzer</h2>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Input your current rig to calculate synergy and latency bottlenecks.</p>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Select your exact rig to calculate latency bottlenecks and true FPS potential.</p>
             
-            <div style="text-align: left; margin-bottom: 15px;">
+            <div style="text-align: left; margin-bottom: 12px;">
                 <label style="color: #00ff00; font-size: 0.8rem;">GPU TIER:</label>
-                <select id="syn-gpu" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="50">Entry Level (GTX 1660 / RTX 3050)</option>
-                    <option value="75">Mid Range (RTX 3060 / RX 6600)</option>
-                    <option value="95" selected>High End (RTX 4060 Ti / RTX 3080)</option>
-                    <option value="100">Enthusiast (RTX 4090 / RX 7900 XTX)</option>
+                <select id="syn-gpu" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                    <option value="30">GTX 1060 / RX 580</option>
+                    <option value="50">RTX 2060 / RX 6600</option>
+                    <option value="70">RTX 3060 / RX 7600</option>
+                    <option value="85" selected>RTX 4060 Ti / RTX 3080</option>
+                    <option value="95">RTX 4070 / RX 7900 XT</option>
+                    <option value="100">RTX 4090 / RX 7900 XTX</option>
                 </select>
             </div>
 
-            <div style="text-align: left; margin-bottom: 15px;">
+            <div style="text-align: left; margin-bottom: 12px;">
                 <label style="color: #00ff00; font-size: 0.8rem;">CPU TIER:</label>
-                <select id="syn-cpu" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="40">Older Gen (i5-10400 / Ryzen 3600)</option>
-                    <option value="70">Current Mid (i5-12400 / Ryzen 5600)</option>
-                    <option value="95" selected>Modern High (i5-14600K / Ryzen 7800X3D)</option>
+                <select id="syn-cpu" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                    <option value="40">i7-8700K / Ryzen 3600</option>
+                    <option value="65">i5-12400F / Ryzen 5600X</option>
+                    <option value="85">i5-13600K / Ryzen 7700X</option>
+                    <option value="95" selected>i5-14600K / Ryzen 7800X3D</option>
+                    <option value="100">i9-14900K / Ryzen 7950X3D</option>
                 </select>
             </div>
 
             <div style="text-align: left; margin-bottom: 20px;">
                 <label style="color: #00ff00; font-size: 0.8rem;">PERIPHERALS:</label>
-                <select id="syn-per" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="50">Standard (Standard Mech / 1000Hz Mouse)</option>
-                    <option value="100" selected>Pro Esports (Apex Pro Mini / G Pro Superlight 2)</option>
+                <select id="syn-per" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                    <option value="30">Basic Office (60Hz / Membrane)</option>
+                    <option value="70">Standard Gaming (1000Hz / Mech)</option>
+                    <option value="95">Pro Esports (4K-8K Polling / Optical)</option>
+                    <option value="100" selected>EFECT Peak (Apex Pro Mini / Superlight 2 / Hex)</option>
                 </select>
             </div>
 
             <div id="syn-result" style="display: none; margin-bottom: 15px; padding: 15px; border: 1px dashed #00ff00; background: rgba(0,255,0,0.1);">
                 <h3 style="margin: 0; color: #fff;">SYNERGY SCORE: <span id="syn-score-text" style="color: #00ff00; text-shadow: 0 0 10px #00ff00;">--</span>/100</h3>
-                <p id="syn-advice" style="color: #aaa; font-size: 0.8rem; margin: 10px 0 0 0;"></p>
+                <p id="syn-advice" style="color: #aaa; font-size: 0.8rem; margin: 10px 0 0 0; line-height: 1.4;"></p>
             </div>
             
             <button id="run-synergy-btn" class="neon-btn" style="width: 100%;">RUN DIAGNOSTIC</button>
         </div>
     </div>
+
 
     <div class="galaxy-wrapper">
         <div class="galaxy-bg"></div>
