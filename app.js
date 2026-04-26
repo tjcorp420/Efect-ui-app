@@ -10,23 +10,42 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// --- HARDWARE AUDIO & HAPTICS BYPASS ---
-const clickSound = new Audio('click.wav'); 
-const bootSound = new Audio('boot.mp3');   
+// --- HARDWARE AUDIO & HAPTICS BYPASS (iOS BULLETPROOF VERSION) ---
+const clickSound = new Audio('./click.wav'); 
+const bootSound = new Audio('./boot.mp3');   
 clickSound.volume = 0.8;
 bootSound.volume = 0.9;
 
+// The iOS Unlocker: Forces Safari to give audio permission on your first tap
+let audioUnlocked = false;
+document.addEventListener('touchstart', () => {
+    if (!audioUnlocked) {
+        clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(() => {});
+        bootSound.play().then(() => { bootSound.pause(); bootSound.currentTime = 0; }).catch(() => {});
+        audioUnlocked = true;
+    }
+}, { once: true });
+
+document.addEventListener('click', () => {
+    if (!audioUnlocked) {
+        clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(() => {});
+        bootSound.play().then(() => { bootSound.pause(); bootSound.currentTime = 0; }).catch(() => {});
+        audioUnlocked = true;
+    }
+}, { once: true });
+
 function triggerClick() {
     clickSound.currentTime = 0; 
-    clickSound.play().catch(() => {});
+    clickSound.play().catch((err) => console.log("Click blocked:", err));
     if (navigator.vibrate) navigator.vibrate(15); 
 }
 
 function triggerBoot() {
     bootSound.currentTime = 0;
-    bootSound.play().catch(() => {});
+    bootSound.play().catch((err) => console.log("Boot blocked:", err));
     if (navigator.vibrate) navigator.vibrate([40, 50, 40]); 
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const crt = document.createElement('div');
