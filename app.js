@@ -10,8 +10,8 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-const clickSound = new Audio('spckclick.mp3'); 
-const bootSound = new Audio('efectboot.mp3');   
+const clickSound = new Audio('All other button clicks.wav'); 
+const bootSound = new Audio('Initializesound.mp3');   
 clickSound.volume = 0.6;
 bootSound.volume = 0.6;
 
@@ -375,18 +375,15 @@ function startTerminalLog() {
 
 // --- LIQUID RIPPLES AND PARTICLES ---
 document.addEventListener('click', e => {
-    // 1. Never spawn effects if user is just typing their password
     if (e.target.tagName === 'INPUT') return;
 
-    // 2. Dynamic Ripple Effect (Expands anywhere you touch)
     const ripple = document.createElement('div');
     ripple.classList.add('ripple');
     ripple.style.left = e.pageX + 'px';
     ripple.style.top = e.pageY + 'px';
     document.body.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600); // Cleans itself up
+    setTimeout(() => ripple.remove(), 600); 
 
-    // 3. Particle Explosion (Only on background, not on buttons)
     if (e.target.tagName === 'BUTTON') return;
     
     for (let j = 0; j < 8; j++) {

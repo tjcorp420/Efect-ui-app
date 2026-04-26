@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EFECT Suite | Performance & Utilities</title>
     
-   <link rel="stylesheet" href="style.css?v=16">
-
+    <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050505">
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
     <div id="share-btn" class="icon-wrapper">
@@ -60,7 +59,7 @@
         </div>
     </div>
 
-    <div id="lock-screen" class="modal-overlay" style="z-index: 99998;">
+    <div id="lock-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020202; z-index: 99998; display: none; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease;">
         <div class="modal-content glass-card" style="display: flex; flex-direction: column; align-items: center; border-color: #00ff00;">
             <i class="fa-solid fa-lock" style="font-size: 2.5rem; color: #00ff00; margin-bottom: 1rem; text-shadow: 0 0 15px #00ff00;"></i>
             <h2 id="lock-title" style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px rgba(0,255,0,0.5);">SYSTEM LOCKED</h2>
