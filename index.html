@@ -2,23 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EFECT Suite | Performance & Utilities</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EFECT Suite | Elite Performance</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050505">
-    <link rel="apple-touch-icon" href="icon.png">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=40">
+    <link rel="stylesheet" href="style.css?v=80">
 </head>
 <body>
-    <div id="share-btn" class="icon-wrapper">
-        <i class="fa-solid fa-arrow-up-from-bracket"></i>
-    </div>
-
     <div id="sales-toast">
         <span class="toast-close" id="close-sales-toast">&times;</span>
         <div class="toast-icon"><i class="fa-solid fa-cart-shopping"></i></div>
@@ -26,6 +16,10 @@
             <h4 style="letter-spacing: 1px;">SECURE CHECKOUT</h4>
             <p id="sale-desc">Incoming data...</p>
         </div>
+    </div>
+
+    <div id="share-btn" class="icon-wrapper" style="position:fixed; top:20px; right:20px; z-index:1000; color:#00ff00; cursor:pointer;">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i>
     </div>
 
     <form id="command-console">
@@ -36,335 +30,113 @@
         <div class="splash-grid-bg"></div>
         <div class="scanner-container">
             <img src="logo.png" alt="EFECT Logo" class="splash-logo">
-            <div class="scanner-line" id="scanner" style="display: none;"></div>
+            <div class="scanner-line"></div>
         </div>
-        
         <button id="init-btn" class="neon-btn pulse-fast">INITIALIZE SYSTEM</button>
         
-        <div id="boot-hud" class="boot-hud" style="display: none;">
-            <div class="hud-side">
-                <span style="color:#fff; border-bottom:1px solid #00ff00; margin-bottom:5px;">MEM_DUMP</span>
-                <div id="hud-hex" style="opacity: 0.7;">0x0000</div>
-                <div id="hud-hex2" style="opacity: 0.5;">0x0000</div>
-            </div>
-            
+        <div id="boot-hud" style="display: none;">
             <div class="hud-center">
-                <div id="splash-terminal" style="margin-bottom: 10px; min-height: 20px;"></div>
+                <div id="splash-terminal" style="margin-bottom: 10px; color:#00ff00;"></div>
                 <div class="seg-bar">
                     <div class="seg" id="seg-1"></div>
                     <div class="seg" id="seg-2"></div>
                     <div class="seg" id="seg-3"></div>
                     <div class="seg" id="seg-4"></div>
-                    <div class="seg" id="seg-5"></div>
-                    <div class="seg" id="seg-6"></div>
                 </div>
-            </div>
-            
-            <div class="hud-side" style="text-align: right;">
-                <span style="color:#fff; border-bottom:1px solid #00ff00; margin-bottom:5px;">CORE_V</span>
-                <div id="hud-volt" style="opacity: 0.7;">1.20V</div>
-                <div id="hud-temp" style="opacity: 0.5;">30°C</div>
             </div>
         </div>
     </div>
 
     <div id="lock-screen" class="modal-overlay" style="background-color: #020202; z-index: 99998;">
-        <div class="modal-content glass-card" style="display: flex; flex-direction: column; align-items: center; border-color: #00ff00;">
-            <i class="fa-solid fa-lock" style="font-size: 2.5rem; color: #00ff00; margin-bottom: 1rem; text-shadow: 0 0 15px #00ff00;"></i>
-            <h2 id="lock-title" style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px rgba(0,255,0,0.5);">SYSTEM LOCKED</h2>
-            <p id="lock-subtitle" style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Enter Master Key to access the EFECT Hub.</p>
-            
-            <input type="password" id="lock-input" placeholder="***" style="background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #00ff00; padding: 10px; text-align: center; font-family: 'Fira Code', monospace; width: 80%; margin-bottom: 1rem; border-radius: 4px; outline: none; font-size: 1.2rem; letter-spacing: 5px;">
-            
+        <div class="modal-content glass-card">
+            <i class="fa-solid fa-lock" style="font-size: 2rem; color: #00ff00; margin-bottom: 1rem;"></i>
+            <h2 id="lock-title" style="color: #00ff00; margin-top: 0;">SYSTEM LOCKED</h2>
+            <input type="password" id="lock-input" placeholder="***" style="background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #00ff00; padding: 10px; text-align: center; width: 80%; margin-bottom: 1rem; border-radius: 4px; outline: none; font-size: 1.2rem;">
             <button id="lock-btn" class="neon-btn" style="width: 80%;">AUTHENTICATE</button>
-            <p id="lock-error" style="color: #ff3333; font-size: 0.8rem; margin-top: 15px; display: none; font-weight: bold; text-shadow: 0 0 10px #ff3333;">> ERROR: ACCESS DENIED</p>
+            <p id="lock-error" style="color: #ff3333; font-size: 0.8rem; margin-top: 15px; display: none;">> ERROR: ACCESS DENIED</p>
         </div>
     </div>
 
     <div id="preview-modal" class="modal-overlay">
         <div class="modal-content glass-card">
             <span class="close-btn" id="close-modal">&times;</span>
-            <h2 style="color: #00ff00; margin-top: 0;">Live Macro Preview</h2>
-            <video id="macro-vid" controls loop playsinline muted>
-                <source src="preview.mp4" type="video/mp4">
-            </video>
-            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro</a>
-            <img src="macro-ui.png" alt="Macro Hub UI" class="modal-img">
-        </div>
-    </div>
-
-    <div id="fps-modal" class="modal-overlay">
-        <div class="modal-content glass-card" style="border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,0.2);">
-            <span class="close-btn" id="close-fps-modal" style="color: #fff;">&times;</span>
-            <h2 style="color: #fff; margin-top: 0; text-shadow: 0 0 10px #fff;">FPS Booster UI</h2>
-            <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff;">
-            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn buy-btn" style="background: #fff; color: #000; box-shadow: 0 0 20px #fff; border: none;">Get Efect FPS Booster</a>
+            <h2 style="color: #00ff00;">Macro Preview</h2>
+            <video id="macro-vid" controls loop playsinline muted style="width:100%; border-radius:8px;"><source src="preview.mp4" type="video/mp4"></video>
+            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn" style="margin-top:10px;">Get Efect Pro Macro</a>
         </div>
     </div>
 
     <div id="synergy-modal" class="modal-overlay">
-        <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 500px;">
+        <div class="modal-content glass-card">
             <span class="close-btn" id="close-synergy-modal">&times;</span>
-            <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">Hardware Analyzer</h2>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Type or select your exact rig to calculate true latency potential.</p>
-            
-            <div style="text-align: left; margin-bottom: 12px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">EXACT GPU:</label>
-                <input list="gpu-list" id="syn-gpu" placeholder="Search GPU (e.g. RTX 4060 Ti)" style="width: 100%; box-sizing: border-box; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                <datalist id="gpu-list">
-                    <option value="NVIDIA RTX 4090">
-                    <option value="NVIDIA RTX 4080 Super">
-                    <option value="NVIDIA RTX 4070 Ti">
-                    <option value="NVIDIA RTX 4060 Ti">
-                    <option value="NVIDIA RTX 3090">
-                    <option value="NVIDIA RTX 3080">
-                    <option value="NVIDIA RTX 3070">
-                    <option value="NVIDIA RTX 3060">
-                    <option value="NVIDIA RTX 2060">
-                    <option value="NVIDIA GTX 1660 Super">
-                    <option value="AMD RX 7900 XTX">
-                    <option value="AMD RX 7800 XT">
-                    <option value="AMD RX 6700 XT">
-                </datalist>
-            </div>
-
-            <div style="text-align: left; margin-bottom: 12px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">EXACT CPU:</label>
-                <input list="cpu-list" id="syn-cpu" placeholder="Search CPU (e.g. i5-14600K)" style="width: 100%; box-sizing: border-box; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                <datalist id="cpu-list">
-                    <option value="Intel i9-14900K">
-                    <option value="Intel i7-14700K">
-                    <option value="Intel i5-14600K">
-                    <option value="Intel i9-13900K">
-                    <option value="Intel i5-13600K">
-                    <option value="Intel i5-12400F">
-                    <option value="AMD Ryzen 7 7800X3D">
-                    <option value="AMD Ryzen 9 7950X3D">
-                    <option value="AMD Ryzen 5 7600X">
-                    <option value="AMD Ryzen 7 5800X3D">
-                    <option value="AMD Ryzen 5 5600X">
-                </datalist>
-            </div>
-
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">MAIN PERIPHERAL:</label>
-                <input list="per-list" id="syn-per" placeholder="Search Gear (e.g. Apex Pro)" style="width: 100%; box-sizing: border-box; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                <datalist id="per-list">
-                    <option value="SteelSeries Apex Pro Mini">
-                    <option value="Logitech G Pro X Superlight 2">
-                    <option value="Wooting 60HE">
-                    <option value="Razer Pro Click / Huntsman">
-                    <option value="Scuf / Hex Gaming Controller">
-                    <option value="Standard Mechanical Keyboard">
-                    <option value="Basic Office Mouse/Keyboard">
-                </datalist>
-            </div>
-
+            <h2 style="color: #00ff00;">Hardware Analyzer</h2>
             <div id="syn-result" style="display: none; margin-bottom: 15px; padding: 15px; border: 1px dashed #00ff00; background: rgba(0,255,0,0.1);">
-                <h3 style="margin: 0; color: #fff;">SYNERGY SCORE: <span id="syn-score-text" style="color: #00ff00; text-shadow: 0 0 10px #00ff00;">--</span>/100</h3>
-                <p id="syn-advice" style="color: #aaa; font-size: 0.8rem; margin: 10px 0 0 0; line-height: 1.4;"></p>
+                <h3 style="margin: 0; color: #fff;">SYNERGY SCORE: <span id="syn-score-text" style="color: #00ff00;">--</span>/100</h3>
+                <p id="syn-advice" style="color: #aaa; font-size: 0.8rem; margin-top: 10px;"></p>
             </div>
-            
             <button id="run-synergy-btn" class="neon-btn" style="width: 100%;">RUN DIAGNOSTIC</button>
         </div>
     </div>
 
     <div id="telemetry-modal" class="modal-overlay">
-        <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 600px;">
+        <div class="modal-content glass-card" style="max-width: 500px;">
             <span class="close-btn" id="close-telemetry-modal">&times;</span>
-            <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">LIVE TELEMETRY</h2>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Simulated direct hardware feed established.</p>
-            
+            <h2 style="color: #00ff00;">LIVE TELEMETRY</h2>
             <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <div style="width: 48%; background: rgba(0,255,0,0.05); border: 1px solid rgba(0,255,0,0.3); padding: 10px; border-radius: 8px;">
-                    <h3 style="color: #fff; margin:0 0 5px 0; font-size: 0.9rem;">CPU CORE</h3>
-                    <div id="tel-cpu-temp" style="font-size: 1.8rem; color: #00ff00; font-weight: bold; text-shadow: 0 0 10px #00ff00;">--°C</div>
-                    <div style="font-size: 0.75rem; color: #aaa; margin-top: 5px;">LOAD: <span id="tel-cpu-load" style="color: #fff;">--%</span></div>
+                <div style="width: 48%; background: rgba(0,255,0,0.05); padding: 10px; border-radius: 8px;">
+                    <h3 style="color: #fff; font-size: 0.8rem; margin:0;">CPU CORE</h3>
+                    <div id="tel-cpu-temp" style="font-size: 1.5rem; color: #00ff00;">--°C</div>
                 </div>
-                <div style="width: 48%; background: rgba(0,255,0,0.05); border: 1px solid rgba(0,255,0,0.3); padding: 10px; border-radius: 8px;">
-                    <h3 style="color: #fff; margin:0 0 5px 0; font-size: 0.9rem;">GPU DIE</h3>
-                    <div id="tel-gpu-temp" style="font-size: 1.8rem; color: #00ff00; font-weight: bold; text-shadow: 0 0 10px #00ff00;">--°C</div>
-                    <div style="font-size: 0.75rem; color: #aaa; margin-top: 5px;">LOAD: <span id="tel-gpu-load" style="color: #fff;">--%</span></div>
+                <div style="width: 48%; background: rgba(0,255,0,0.05); padding: 10px; border-radius: 8px;">
+                    <h3 style="color: #fff; font-size: 0.8rem; margin:0;">GPU DIE</h3>
+                    <div id="tel-gpu-temp" style="font-size: 1.5rem; color: #00ff00;">--°C</div>
                 </div>
             </div>
-
-            <div style="text-align: left; background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 10px; border-radius: 8px; font-size: 0.75rem; color: #00ff00; height: 120px; position: relative;">
-                <div style="position: absolute; top: 8px; left: 10px; color: #555; z-index: 2;">NETWORK LATENCY (ms)</div>
-                <div id="ping-graph" style="display: flex; align-items: flex-end; gap: 3px; height: 100%; padding-top: 20px; overflow: hidden;"></div>
-            </div>
-            
-            <button id="btn-force-cool" class="neon-btn" style="margin-top: 20px; width: 100%; border-color: #00ff00;">ENGAGE CORE COOLING</button>
+            <div id="ping-graph" style="display: flex; align-items: flex-end; gap: 3px; height: 100px; border:1px solid #333; padding:5px; overflow: hidden;"></div>
+            <button id="btn-force-cool" class="neon-btn" style="margin-top: 20px; width: 100%;">ENGAGE COOLING</button>
         </div>
     </div>
 
-    <div id="docs-modal" class="modal-overlay">
-        <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 700px; padding: 20px;">
-            <span class="close-btn" id="close-docs-modal">&times;</span>
-            <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">DOCUMENTATION VAULT</h2>
-            
-            <div class="tab-container">
-                <button class="tab-btn active" data-target="doc-optimizer">EFECT PRO ELITE</button>
-                <button class="tab-btn" data-target="doc-macro">MACRO ENGINE</button>
-                <button class="tab-btn" data-target="doc-fps">FPS BOOSTER</button>
-            </div>
-
-            <div id="doc-optimizer" class="doc-content active">
-                <p><strong>> SYSTEM DIRECTIVE: THE ULTIMATE ZERO-DELAY ENGINE</strong><br>
-                Stop fighting your Operating System and start fighting your opponents. Efect Pro Elite is not just a standard "cleaner"—it is a precision-engineered kernel interaction layer designed to strip away every millisecond of Windows-induced latency. Built exclusively for the competitive Fortnite community, Elite transforms your standard PC into a locked 240+ FPS powerhouse.</p>
-                
-                <h3>[ CORE ENGINE MODULES ]</h3>
-                <ul>
-                    <li><strong>KERNEL-LEVEL DOMINANCE:</strong> Bypasses standard Windows I/O scheduling to force your CPU and GPU into a pure "Direct-Communication" state.</li>
-                    <li><strong>ZERO INPUT LATENCY:</strong> From 0ms keyboard buffer registration to exclusive MSI-mode interrupt processing, your builds register before the physical switch bottoms out.</li>
-                    <li><strong>PERFECT FRAME PACING:</strong> Eliminates micro-stutters. By disabling HPET and variable system ticks, the Windows Kernel syncs perfectly with the Unreal Engine heart rate.</li>
-                    <li><strong>VBS/HVCI BYPASS:</strong> Reclaims up to 15% of your raw FPS that is normally choked by background Windows security virtualization.</li>
-                    <li><strong>QoS HIT-REG:</strong> Prioritizes Fortnite weapon and movement packets directly within the network stack.</li>
-                </ul>
-
-                <h3>[ THE CYBER-ELITE UI ]</h3>
-                <p>Performance doesn't mean sacrificing aesthetics. Elite features a high-performance Glassmorphism dashboard running on 0% background overhead.</p>
-                <ul>
-                    <li><strong>Visual Calibration:</strong> Match your setup instantly with the built-in Hue Shifter.</li>
-                    <li><strong>Canvas Kill-Switch:</strong> Click to suspend all dashboard animations while you are in the lobby for absolute maximum GPU allocation.</li>
-                    <li><strong>Elite Sync System:</strong> Never manually download a patch again. The integrated GitHub Auto-Updater pushes fresh registry bypasses directly to your terminal.</li>
-                </ul>
-            </div>
-
-            <div id="doc-macro" class="doc-content">
-                <p><strong>> SYSTEM DIRECTIVE: THE MECHANICAL ADVANTAGE</strong><br>
-                Take absolute control of your mechanics. Engineered for players who demand zero latency, this lightweight utility bridges the gap between raw human reaction time and server-side execution. Stop losing walls to 0-ping players.</p>
-
-                <h3>[ EXECUTION PARAMETERS ]</h3>
-                <ul>
-                    <li><strong>ADVANCED DRAG MACRO:</strong> Master complex edits with branched drag logic.
-                        <br>- <em>HOLD MODE:</em> Taps Edit and holds Select for exactly as long as your bind is physically pressed. Vital for high-speed tunneling.
-                        <br>- <em>TAP MODE:</em> Automates the drag. Hit your bind once to trigger an Edit and a precision-timed Select-hold for pixel-perfect consistency.</li>
-                    <li><strong>FLAWLESS DOUBLE EDITS:</strong> Automate edit, select, and confirm sequences into a single keystroke. Eradicates blank edits under pressure.</li>
-                    <li><strong>INSTANT BUILD AUTO-PLACEMENT:</strong> Bypass manual left-clicks. Your piece places on the exact frame your bind registers.</li>
-                    <li><strong>SPRINT SYNC ENGINE:</strong> Maintains perfect momentum while building, automatically overriding the game's default turbo-build delays.</li>
-                </ul>
-
-                <h3>[ CALIBRATION & HARDWARE ]</h3>
-                <p>Built to scale with flagship hardware like the Logitech Superlight 2 and Apex Pro Mini.</p>
-                <ul>
-                    <li><strong>Dual-Slider Precision:</strong> Dial in your exact Engine Speed (5ms - 50ms) and Drag Duration (1ms - 500ms).</li>
-                    <li><strong>The Keyboard-First Advantage:</strong> Offload complex multi-key combos to your fastest mechanical switches to maintain absolute mouse sensor stability for aim tracking.</li>
-                    <li><strong>Secure Kernel Link:</strong> Operates safely in the background to bypass anti-cheat flags. Includes a dedicated Emergency Kill Switch.</li>
-                </ul>
-            </div>
-
-            <div id="doc-fps" class="doc-content">
-                <p><strong>> SYSTEM DIRECTIVE: RAW HARDWARE OVERRIDE</strong><br>
-                Most "PC Tweaks" just change your power plan. EFECT PRO rewires how your hardware talks to the game engine.</p>
-
-                <h3>[ OVERCLOCKING & STABILITY ]</h3>
-                <ul>
-                    <li><strong>MAXIMIZE FPS:</strong> Forces the CPU and GPU to ignore Windows power-saving states, unlocking raw, hidden frames in titles like Fortnite and Valorant.</li>
-                    <li><strong>MINIMIZE INPUT LAG:</strong> The "Zero-Delay" engine aggressively reduces the digital travel time between your peripheral click and the on-screen reaction.</li>
-                    <li><strong>NETWORK STABILIZATION:</strong> Disables Nagle's Algorithm and eradicates Windows Network Throttling for a perfectly smooth, spike-free server connection.</li>
-                    <li><strong>GHOST-STATE UPDATER:</strong> Runs silently. The integrated Auto-Updater ensures a random Windows Update never breaks your custom tweaks.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="galaxy-wrapper">
-        <div class="galaxy-bg"></div>
-        <div class="galaxy-stars-1"></div>
-        <div class="galaxy-stars-2"></div>
-    </div>
+    <div class="galaxy-wrapper"><div class="galaxy-bg"></div><div class="galaxy-stars-1"></div></div>
 
     <div class="container">
         <header>
-            <img src="logo.png" alt="EFECT Logo" class="main-logo">
+            <img src="logo.png" alt="EFECT Logo" class="main-logo" style="max-width:240px;">
             <h1 id="typewriter" class="glitch-hover"></h1>
             <p class="subtitle">System Optimization, Macro Engine & Custom Arenas</p>
-            <div id="terminal-log" class="terminal-log"></div>
+            <div id="terminal-log" style="color:#00ff00; font-size:0.7rem; height:20px;"></div>
         </header>
 
-        <div id="diag-panel" class="glass-card">
-            <div class="diag-item"><i class="fa-solid fa-battery-three-quarters"></i> <span id="batt-level">SCAN...</span></div>
-            <div class="diag-item"><i class="fa-solid fa-wifi"></i> <span id="net-status">SCAN...</span></div>
-            <div class="diag-item"><i class="fa-solid fa-microchip"></i> <span id="proc-load">EFECT: ACTIVE</span></div>
-        </div>
-        
         <div class="card-container">
-            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
-                <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-microchip"></i></div>
-                    <span class="status online"><span class="dot"></span> ONLINE</span>
-                </div>
+            <div class="glass-card" data-tilt>
+                <div class="card-header"><span class="status online"><span class="dot"></span> ONLINE</span></div>
                 <h2>Efect Macros & Tweaks</h2>
-                <p>Zero-delay system tweaks, high-precision automation, and ultimate latency reduction.</p>
+                <p>Zero-delay system tweaks and precision automation.</p>
                 <button id="btn-hub" class="neon-btn">Access Hub</button>
-                <button id="btn-preview" class="neon-btn secondary-btn">Watch Preview</button>
+                <button id="btn-preview" class="neon-btn" style="margin-top:10px; border-color:rgba(0,255,0,0.3);">Watch Preview</button>
             </div>
 
-            <div id="secret-fps-card" class="glass-card" style="display: none;" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
-                <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-gauge-high"></i></div>
-                    <span class="status online" style="color: #fff; background: rgba(255,255,255,0.2); border-color: #fff;"><span class="dot" style="background:#fff; box-shadow: 0 0 5px #fff;"></span> OVERCLOCKED</span>
-                </div>
-                <h2 style="color: #fff; text-shadow: 0 0 10px #fff;">Efect FPS Booster</h2>
-                <p style="color: #ccc;">Maximum frame rate unlocked. Background processes terminated. Ready for launch.</p>
-                <button onclick="window.open('https://payhip.com/b/EQIrd', '_blank')" class="neon-btn" style="color: #000; background: #fff; box-shadow: 0 0 20px #fff; border-color: #fff;">Engage</button>
-                <button id="btn-fps-preview" class="neon-btn secondary-btn" style="border-color: #fff; color: #fff;">View UI</button>
+            <div id="secret-fps-card" class="glass-card" style="display: none; border-color:#fff;" data-tilt>
+                <div class="card-header"><span class="status online" style="color:#fff; border-color:#fff;"><span class="dot" style="background:#fff;"></span> OVERCLOCKED</span></div>
+                <h2 style="color:#fff;">Efect FPS Booster</h2>
+                <button onclick="window.open('https://payhip.com/b/EQIrd', '_blank')" class="neon-btn" style="background:#fff; color:#000;">Engage</button>
             </div>
 
-            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
-                <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-gamepad"></i></div>
-                    <span class="status online"><span class="dot"></span> ONLINE</span>
-                </div>
-                <h2>Efect Fortnite Maps</h2>
-                <p>Official custom maps, precision aim trainers, and competitive practice arenas.</p>
-                <button id="btn-maps" class="neon-btn">View Maps</button>
-            </div>
-
-            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
-                <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-calculator"></i></div>
-                    <span class="status online" style="color: #00ff00; border-color: #00ff00; background: rgba(0,255,0,0.1);"><span class="dot"></span> LIVE TOOL</span>
-                </div>
+            <div class="glass-card" data-tilt>
+                <div class="card-header"><span class="status online"><span class="dot"></span> LIVE TOOL</span></div>
                 <h2>Synergy Calculator</h2>
-                <p>Analyze your hardware & settings to find your true latency potential.</p>
-                <p style="color: #00ff00; font-family: monospace; font-weight: bold; font-size: 0.9rem;">SCORE: <span id="card-synergy-score">--</span></p>
-                <button id="btn-synergy" class="neon-btn" style="background: #00ff00; color: #000; text-shadow: none;">LAUNCH ANALYZER</button>
-            </div>
-
-            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
-                <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-book-journal-whills"></i></div>
-                    <span class="status online" style="color: #00ffff; border-color: #00ffff; background: rgba(0,255,255,0.1);"><span class="dot" style="background: #00ffff; box-shadow: 0 0 5px #00ffff;"></span> ACCESSIBLE</span>
-                </div>
-                <h2 style="color: #00ffff; text-shadow: 0 0 10px rgba(0,255,255,0.5);">Efect Documentation</h2>
-                <p>Official setup guides, core engine modules, and technical readmes for the software suite.</p>
-                <button id="btn-docs" class="neon-btn" style="color: #00ffff; border-color: #00ffff; animation: none;">OPEN VAULT</button>
+                <button id="btn-synergy" class="neon-btn">LAUNCH ANALYZER</button>
             </div>
 
             <div id="hw-monitor-card" class="glass-card locked" data-tilt>
-                <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-server"></i></div>
-                    <span class="status dev" id="hw-status-badge"><span class="dot"></span> LOCKED</span>
-                </div>
-                <h2>Efect Hardware Monitor</h2>
-                <p>Real-time telemetry and core-locking utility for ultimate system stability.</p>
+                <div class="card-header"><span class="status dev" id="hw-status-badge">LOCKED</span></div>
+                <h2>Hardware Monitor</h2>
                 <button id="btn-hw-monitor" class="neon-btn disabled" disabled>SYSTEM LOCKED</button>
             </div>
-
-        </div>
-    </div>
-
-    <div id="ticker-wrap">
-        <div id="ticker-text">
-            <span class="ticker-item"><i class="fa-solid fa-circle-check"></i> SYSTEM ONLINE</span>
-            <span class="ticker-item" id="gh-update"><i class="fa-solid fa-satellite-dish"></i> FETCHING LIVE GITHUB DATA...</span>
-            <span class="ticker-item"><i class="fa-solid fa-shield-halved"></i> LATENCY BYPASS ACTIVE</span>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
-    <script src="app.js?v=42></scrip>
+    <script src="app.js?v=80"></script>
 </body>
 </html>
-"
