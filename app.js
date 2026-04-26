@@ -30,25 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
         isBooting = true;
         sound1.play().catch(()=>{}); // Safe play
         
-        initBtn.style.display = 'none'; 
-        bootHud.style.display = 'flex';
-        scanner.style.display = 'block';
-        setTimeout(() => bootHud.style.opacity = '1', 10);
+        if(initBtn) initBtn.style.display = 'none'; 
+        if(bootHud) bootHud.style.display = 'flex';
+        if(scanner) scanner.style.display = 'block';
+        setTimeout(() => { if(bootHud) bootHud.style.opacity = '1'; }, 10);
         
         // Request Gyro
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
             try {
                 const permissionState = await DeviceOrientationEvent.requestPermission();
                 if (permissionState === 'granted') window.addEventListener('deviceorientation', handleGyro);
-            } catch (e) {}
+            } catch (err) {}
         } else { window.addEventListener('deviceorientation', handleGyro); }
 
         // HUD Data Streamers
         const hexStream = setInterval(() => {
-            document.getElementById('hud-hex').innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
-            document.getElementById('hud-hex2').innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
-            document.getElementById('hud-volt').innerText = (Math.random() * (1.35 - 1.15) + 1.15).toFixed(2) + 'V';
-            document.getElementById('hud-temp').innerText = Math.floor(Math.random() * (65 - 35) + 35) + '°C';
+            const hHex = document.getElementById('hud-hex');
+            const hHex2 = document.getElementById('hud-hex2');
+            const hVolt = document.getElementById('hud-volt');
+            const hTemp = document.getElementById('hud-temp');
+            if(hHex) hHex.innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+            if(hHex2) hHex2.innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+            if(hVolt) hVolt.innerText = (Math.random() * (1.35 - 1.15) + 1.15).toFixed(2) + 'V';
+            if(hTemp) hTemp.innerText = Math.floor(Math.random() * (65 - 35) + 35) + '°C';
         }, 100);
 
         let bootIdx = 0;
@@ -63,17 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const bootInterval = setInterval(() => {
             if (bootIdx < 6) {
-                splashTerminal.innerHTML = `> ${bootSteps[bootIdx]}`;
-                document.getElementById(`seg-${bootIdx + 1}`).classList.add('active');
+                if(splashTerminal) splashTerminal.innerHTML = `> ${bootSteps[bootIdx]}`;
+                const seg = document.getElementById(`seg-${bootIdx + 1}`);
+                if(seg) seg.classList.add('active');
                 bootIdx++;
             } else {
                 clearInterval(bootInterval);
                 clearInterval(hexStream);
                 
                 setTimeout(() => {
-                    splashScreen.style.opacity = '0';
+                    if(splashScreen) splashScreen.style.opacity = '0';
                     setTimeout(() => {
-                        splashScreen.remove();
+                        if(splashScreen) splashScreen.remove();
                         initLockScreen(); 
                     }, 500);
                 }, 400);
@@ -90,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- SECURE LOCK SCREEN LOGIC ---
     function initLockScreen() {
         const lockScreen = document.getElementById('lock-screen');
+        if(!lockScreen) {
+            unlockSystem(); // Failsafe if lock screen missing from HTML
+            return;
+        }
+
         lockScreen.style.display = 'flex';
         setTimeout(() => { lockScreen.style.opacity = '1'; }, 10);
 
@@ -101,17 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const lockError = document.getElementById('lock-error');
 
         if (!savedPin) {
-            lockTitle.innerText = "INITIAL SETUP";
-            lockSubtitle.innerText = "Create a new Master Key to encrypt your hub.";
-            lockBtn.innerText = "REGISTER KEY";
+            if(lockTitle) lockTitle.innerText = "INITIAL SETUP";
+            if(lockSubtitle) lockSubtitle.innerText = "Create a new Master Key to encrypt your hub.";
+            if(lockBtn) lockBtn.innerText = "REGISTER KEY";
         } else {
-            lockTitle.innerText = "SYSTEM LOCKED";
-            lockSubtitle.innerText = "Enter your Master Key to proceed.";
-            lockBtn.innerText = "AUTHENTICATE";
+            if(lockTitle) lockTitle.innerText = "SYSTEM LOCKED";
+            if(lockSubtitle) lockSubtitle.innerText = "Enter your Master Key to proceed.";
+            if(lockBtn) lockBtn.innerText = "AUTHENTICATE";
         }
 
         const handleAuth = (e) => {
             if(e) e.preventDefault();
+            if(!lockInput) return;
             const val = lockInput.value.trim();
             if(!val) return;
             sound1.play().catch(()=>{});
@@ -123,26 +134,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (val === savedPin) {
                     unlockSystem();
                 } else {
-                    lockError.style.display = 'block';
+                    if(lockError) lockError.style.display = 'block';
                     lockInput.value = ''; 
                     const mc = lockScreen.querySelector('.modal-content');
-                    mc.style.transform = 'translateX(-10px)';
-                    setTimeout(() => mc.style.transform = 'translateX(10px)', 100);
-                    setTimeout(() => mc.style.transform = 'translateX(0)', 200);
+                    if(mc) {
+                        mc.style.transform = 'translateX(-10px)';
+                        setTimeout(() => mc.style.transform = 'translateX(10px)', 100);
+                        setTimeout(() => mc.style.transform = 'translateX(0)', 200);
+                    }
                 }
             }
         };
 
-        lockBtn.addEventListener('touchstart', handleAuth, {passive: false});
-        lockBtn.addEventListener('click', handleAuth);
-        lockInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleAuth(); });
+        if(lockBtn) {
+            lockBtn.addEventListener('touchstart', handleAuth, {passive: false});
+            lockBtn.addEventListener('click', handleAuth);
+        }
+        if(lockInput) {
+            lockInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleAuth(); });
+        }
     }
 
     function unlockSystem() {
         const lockScreen = document.getElementById('lock-screen');
-        lockScreen.style.opacity = '0';
+        if(lockScreen) lockScreen.style.opacity = '0';
         setTimeout(() => {
-            lockScreen.style.display = 'none';
+            if(lockScreen) lockScreen.style.display = 'none';
             typeWriter(); 
             initDiagnostics(); 
             fetchGitHubUpdates();
@@ -173,31 +190,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
 
-    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
-    document.addEventListener('touchend', e => {
-        if (startY < 80 && e.changedTouches[0].clientY > startY + 60) {
-            consoleUI.style.top = '0';
-            cmdInput.focus();
-        }
-    });
+    if (consoleUI && cmdInput) {
+        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
+        document.addEventListener('touchend', e => {
+            if (startY < 80 && e.changedTouches[0].clientY > startY + 60) {
+                consoleUI.style.top = '0';
+                cmdInput.focus();
+            }
+        });
 
-    consoleUI.addEventListener('submit', function (e) {
-        e.preventDefault(); 
-        const code = cmdInput.value.toLowerCase().replace(/\s+/g, '');
-        
-        if (code === 'efect.lit') {
-            document.getElementById('secret-fps-card').style.display = 'flex';
-            alert("FPS OVERRIDE ACTIVE.");
-        } else if (code === 'color_override') {
-            document.body.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
-        } else if (code === 'matrix') {
-            startMatrix();
-        }
-        
-        consoleUI.style.top = '-100px';
-        cmdInput.value = '';
-        cmdInput.blur();
-    });
+        consoleUI.addEventListener('submit', function (e) {
+            e.preventDefault(); 
+            const code = cmdInput.value.toLowerCase().replace(/\s+/g, '');
+            
+            if (code === 'efect.lit') {
+                const fCard = document.getElementById('secret-fps-card');
+                if(fCard) fCard.style.display = 'flex';
+                alert("FPS OVERRIDE ACTIVE.");
+            } else if (code === 'color_override') {
+                document.body.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+            } else if (code === 'matrix') {
+                startMatrix();
+            }
+            
+            consoleUI.style.top = '-100px';
+            cmdInput.value = '';
+            cmdInput.blur();
+        });
+    }
 
     // --- MODALS ---
     const setupModal = (btnId, modalId, vidId = null) => {
@@ -205,9 +225,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             sound1.play().catch(()=>{});
             const modal = document.getElementById(modalId);
-            modal.style.display = 'flex';
-            setTimeout(() => modal.style.opacity = '1', 10);
-            if(vidId) document.getElementById(vidId).play();
+            if(modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.style.opacity = '1', 10);
+            }
+            if(vidId) document.getElementById(vidId)?.play();
         });
     };
 
@@ -215,14 +237,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModal('btn-fps-preview', 'fps-modal');
 
     document.getElementById('close-modal')?.addEventListener('click', () => {
-        document.getElementById('preview-modal').style.opacity = '0';
-        document.getElementById('macro-vid').pause();
-        setTimeout(() => document.getElementById('preview-modal').style.display = 'none', 300);
+        const pm = document.getElementById('preview-modal');
+        if(pm) pm.style.opacity = '0';
+        document.getElementById('macro-vid')?.pause();
+        setTimeout(() => { if(pm) pm.style.display = 'none'; }, 300);
     });
 
     document.getElementById('close-fps-modal')?.addEventListener('click', () => {
-        document.getElementById('fps-modal').style.opacity = '0';
-        setTimeout(() => document.getElementById('fps-modal').style.display = 'none', 300);
+        const fm = document.getElementById('fps-modal');
+        if(fm) fm.style.opacity = '0';
+        setTimeout(() => { if(fm) fm.style.display = 'none'; }, 300);
     });
 
     document.getElementById('btn-hub')?.addEventListener('click', () => window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'));
@@ -232,6 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
 async function fetchGitHubUpdates() {
     const ghUpdateElement = document.getElementById('gh-update');
+    if (!ghUpdateElement) return;
+
     const cachedData = localStorage.getItem('efect_gh_update');
     const cacheTime = localStorage.getItem('efect_gh_time');
     
@@ -270,26 +296,30 @@ async function fetchGitHubUpdates() {
 // --- REAL HARDWARE DIAGNOSTICS ---
 function initDiagnostics() {
     const battSpan = document.getElementById('batt-level');
-    if ('getBattery' in navigator) {
-        navigator.getBattery().then(battery => {
-            const updateBatt = () => { battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`; };
-            updateBatt();
-            battery.addEventListener('levelchange', updateBatt);
-            battery.addEventListener('chargingchange', updateBatt);
-        }).catch(() => { battSpan.innerText = "SECURED"; });
-    } else { battSpan.innerText = "HIDDEN"; }
+    if (battSpan) {
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(battery => {
+                const updateBatt = () => { battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`; };
+                updateBatt();
+                battery.addEventListener('levelchange', updateBatt);
+                battery.addEventListener('chargingchange', updateBatt);
+            }).catch(() => { battSpan.innerText = "SECURED"; });
+        } else { battSpan.innerText = "HIDDEN"; }
+    }
 
     const netSpan = document.getElementById('net-status');
-    const updateNet = () => {
-        if (navigator.connection && navigator.connection.effectiveType) {
-            netSpan.innerText = navigator.connection.effectiveType.toUpperCase();
-        } else {
-            netSpan.innerText = navigator.onLine ? 'ONLINE' : 'OFFLINE';
-        }
-    };
-    updateNet();
-    window.addEventListener('online', updateNet);
-    window.addEventListener('offline', updateNet);
+    if (netSpan) {
+        const updateNet = () => {
+            if (navigator.connection && navigator.connection.effectiveType) {
+                netSpan.innerText = navigator.connection.effectiveType.toUpperCase();
+            } else {
+                netSpan.innerText = navigator.onLine ? 'ONLINE' : 'OFFLINE';
+            }
+        };
+        updateNet();
+        window.addEventListener('online', updateNet);
+        window.addEventListener('offline', updateNet);
+    }
 }
 
 // --- MATRIX EFFECT ---
@@ -332,7 +362,8 @@ function handleGyro(e) {
 
 function typeWriter() {
     if (i < text.length) {
-        document.getElementById("typewriter").innerHTML += text.charAt(i);
+        const tw = document.getElementById("typewriter");
+        if(tw) tw.innerHTML += text.charAt(i);
         i++;
         setTimeout(typeWriter, speed);
     } else { startTerminalLog(); }
@@ -340,10 +371,12 @@ function typeWriter() {
 
 function startTerminalLog() {
     const log = document.getElementById("terminal-log");
-    setInterval(() => {
-        log.innerText = "> " + systemLogs[logIndex];
-        logIndex = (logIndex + 1) % systemLogs.length;
-    }, 2000);
+    if(log) {
+        setInterval(() => {
+            log.innerText = "> " + systemLogs[logIndex];
+            logIndex = (logIndex + 1) % systemLogs.length;
+        }, 2000);
+    }
 }
 
 document.addEventListener('click', e => {
