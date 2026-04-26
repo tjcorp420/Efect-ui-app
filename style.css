@@ -775,7 +775,7 @@ canvas#matrix-canvas {
 @keyframes textGlitch {
     0%, 96%, 100% { opacity: 1; transform: translateX(0); }
     97% { opacity: 0.8; transform: translateX(-2px); color: #fff; }
-    98% { opacity: 0.9; transform: translateX(2px); color: #00ff00; }
+    98% { opacity: 0.9; transform: translateX(2px); coiolor: #00ff00; }
     99% { opacity: 0.8; transform: translateX(-1px); color: #ff3333; }
 }
 
