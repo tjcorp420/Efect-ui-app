@@ -10,9 +10,9 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// --- HARDWARE AUDIO & HAPTICS BYPASS ---
-const clickSound = new Audio('spckclick.mp3'); 
-const bootSound = new Audio('efectboot.mp3');   
+// --- HARDWARE AUDIO & HAPTICS BYPASS (FIXED FILE PATHS) ---
+const clickSound = new Audio('All%20other%20button%20clicks.wav'); 
+const bootSound = new Audio('Initializesound.mp3');   
 clickSound.volume = 0.8;
 bootSound.volume = 0.9;
 
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- COMMAND CONSOLE LOGIC (INCLUDES 420 UNLOCK) ---
+    // --- COMMAND CONSOLE LOGIC ---
     const consoleUI = document.getElementById('command-console');
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
@@ -329,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
             triggerClick(); 
             scoreText.innerText = score;
             
-            // Save to memory
             localStorage.setItem('efect_synergy_score', score);
             if (cardScore) cardScore.innerText = `${score}/100`;
             

@@ -4,7 +4,7 @@ body,
 html {
     margin: 0;
     padding: 0;
-    background-color: #000; /* Dark base so galaxy shines through */
+    background-color: #000; 
     color: #fff;
     font-family: 'Fira Code', monospace;
     min-height: 100vh;
@@ -100,7 +100,7 @@ html {
 .galaxy-wrapper {
     position: fixed;
     top: -20%; left: -20%; width: 140vw; height: 140vh;
-    z-index: 0; /* FIX: Pulled forward so iOS doesn't hide it */
+    z-index: 0; 
     overflow: hidden;
     pointer-events: none;
     transition: transform 0.1s ease-out; 
@@ -144,7 +144,7 @@ html {
 /* --- MAIN UI STYLES --- */
 .container {
     position: relative;
-    z-index: 10; /* FIX: Keeps your main cards floating above the galaxy */
+    z-index: 10; 
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
@@ -607,6 +607,7 @@ canvas#matrix-canvas {
     z-index: -2;
     display: none;
 }
+
 /* --- CRT MONITOR SCANLINES --- */
 .crt-overlay {
     position: fixed;
@@ -623,52 +624,3 @@ canvas#matrix-canvas {
     0% { background-position: 0 0; }
     100% { background-position: 0 100vh; }
 }
-/* --- SYNERGY CALCULATOR STYLES --- */
-.calc-modal-style {
-    max-width: 500px;
-    padding: 2rem;
-}
-
-.calc-group {
-    margin: 1.5rem 0;
-    text-align: left;
-}
-
-.calc-group label {
-    display: block;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    color: #00ff00;
-    margin-bottom: 10px;
-}
-
-.neon-slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    background: rgba(0, 255, 0, 0.2);
-    outline: none;
-    border-radius: 2px;
-}
-
-.neon-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 15px;
-    height: 15px;
-    background: #00ff00;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #00ff00;
-    cursor: pointer;
-}
-
-.synergy-output {
-    margin: 2rem 0;
-    padding: 1rem;
-    border: 1px solid rgba(0, 255, 0, 0.3);
-    border-radius: 8px;
-    background: rgba(0,0,0,0.3);
-}
-
-#synergy-score {
-    font-size:
