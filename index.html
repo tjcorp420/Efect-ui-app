@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
     <div id="share-btn" class="icon-wrapper">
@@ -24,19 +24,38 @@
     </form>
 
     <div id="splash-screen">
-        <img src="logo.png" alt="EFECT Logo" class="splash-logo">
-        <div id="splash-terminal"></div>
-        <button id="init-btn" class="neon-btn">INITIALIZE SYSTEM</button>
-        <div id="loader-wrapper" style="display: none;">
-            <div id="loader-bar"></div>
+        <div class="splash-grid-bg"></div>
+        <div class="scanner-container">
+            <img src="logo.png" alt="EFECT Logo" class="splash-logo">
+            <div class="scanner-line" id="scanner" style="display: none;"></div>
         </div>
-    </div>
-        <div id="splash-screen">
-        <img src="logo.png" alt="EFECT Logo" class="splash-logo">
-        <div id="splash-terminal"></div>
-        <button id="init-btn" class="neon-btn">INITIALIZE SYSTEM</button>
-        <div id="loader-wrapper" style="display: none;">
-            <div id="loader-bar"></div>
+        
+        <button id="init-btn" class="neon-btn pulse-fast">INITIALIZE SYSTEM</button>
+        
+        <div id="boot-hud" class="boot-hud" style="display: none;">
+            <div class="hud-side">
+                <span style="color:#fff; border-bottom:1px solid #00ff00; margin-bottom:5px;">MEM_DUMP</span>
+                <div id="hud-hex" style="opacity: 0.7;">0x0000</div>
+                <div id="hud-hex2" style="opacity: 0.5;">0x0000</div>
+            </div>
+            
+            <div class="hud-center">
+                <div id="splash-terminal" style="margin-bottom: 10px; min-height: 20px;"></div>
+                <div class="seg-bar">
+                    <div class="seg" id="seg-1"></div>
+                    <div class="seg" id="seg-2"></div>
+                    <div class="seg" id="seg-3"></div>
+                    <div class="seg" id="seg-4"></div>
+                    <div class="seg" id="seg-5"></div>
+                    <div class="seg" id="seg-6"></div>
+                </div>
+            </div>
+            
+            <div class="hud-side" style="text-align: right;">
+                <span style="color:#fff; border-bottom:1px solid #00ff00; margin-bottom:5px;">CORE_V</span>
+                <div id="hud-volt" style="opacity: 0.7;">1.20V</div>
+                <div id="hud-temp" style="opacity: 0.5;">30°C</div>
+            </div>
         </div>
     </div>
 
@@ -52,7 +71,6 @@
             <p id="lock-error" style="color: #ff3333; font-size: 0.8rem; margin-top: 15px; display: none; font-weight: bold; text-shadow: 0 0 10px #ff3333;">> ERROR: ACCESS DENIED</p>
         </div>
     </div>
-
 
     <div id="preview-modal" class="modal-overlay">
         <div class="modal-content glass-card">
@@ -148,4 +166,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-

@@ -16,48 +16,80 @@ sound1.volume = 0.6;
 sound2.volume = 0.6;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- BOOT SPLASH & GYRO ---
+    // --- SOPHISTICATED BOOT SPLASH ---
     const initBtn = document.getElementById('init-btn');
     const splashScreen = document.getElementById('splash-screen');
     const splashTerminal = document.getElementById('splash-terminal');
-    const loaderBar = document.getElementById('loader-bar');
-    const lockScreen = document.getElementById('lock-screen');
+    const bootHud = document.getElementById('boot-hud');
+    const scanner = document.getElementById('scanner');
+    let isBooting = false;
 
-    if(initBtn) {
-        initBtn.addEventListener('click', async () => {
-            initBtn.style.display = 'none'; 
-            document.getElementById('loader-wrapper').style.display = 'block';
-            
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permissionState = await DeviceOrientationEvent.requestPermission();
-                    if (permissionState === 'granted') window.addEventListener('deviceorientation', handleGyro);
-                } catch (e) { console.error(e); }
-            } else { window.addEventListener('deviceorientation', handleGyro); }
+    const startBootSequence = async (e) => {
+        if(e) e.preventDefault(); 
+        if(isBooting) return;
+        isBooting = true;
+        sound1.play().catch(()=>{}); // Safe play
+        
+        initBtn.style.display = 'none'; 
+        bootHud.style.display = 'flex';
+        scanner.style.display = 'block';
+        setTimeout(() => bootHud.style.opacity = '1', 10);
+        
+        // Request Gyro
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+                const permissionState = await DeviceOrientationEvent.requestPermission();
+                if (permissionState === 'granted') window.addEventListener('deviceorientation', handleGyro);
+            } catch (e) {}
+        } else { window.addEventListener('deviceorientation', handleGyro); }
 
-            let bootIdx = 0;
-            const bootInterval = setInterval(() => {
-                if (bootIdx < 6) {
-                    splashTerminal.innerHTML += `> BOOT_SEQ_${bootIdx}... OK<br>`;
-                    bootIdx++;
-                    loaderBar.style.width = `${(bootIdx / 6) * 100}%`;
-                } else {
-                    clearInterval(bootInterval);
-                    // Fade out splash screen and show Lock Screen
+        // HUD Data Streamers
+        const hexStream = setInterval(() => {
+            document.getElementById('hud-hex').innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+            document.getElementById('hud-hex2').innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+            document.getElementById('hud-volt').innerText = (Math.random() * (1.35 - 1.15) + 1.15).toFixed(2) + 'V';
+            document.getElementById('hud-temp').innerText = Math.floor(Math.random() * (65 - 35) + 35) + '°C';
+        }, 100);
+
+        let bootIdx = 0;
+        const bootSteps = [
+            "INJECTING_KERNEL_HOOKS...",
+            "BYPASSING_LATENCY_GATES...",
+            "ALLOCATING_MEMORY...",
+            "SECURING_ENCRYPTION...",
+            "LINKING_HARDWARE...",
+            "SYSTEM_READY"
+        ];
+
+        const bootInterval = setInterval(() => {
+            if (bootIdx < 6) {
+                splashTerminal.innerHTML = `> ${bootSteps[bootIdx]}`;
+                document.getElementById(`seg-${bootIdx + 1}`).classList.add('active');
+                bootIdx++;
+            } else {
+                clearInterval(bootInterval);
+                clearInterval(hexStream);
+                
+                setTimeout(() => {
+                    splashScreen.style.opacity = '0';
                     setTimeout(() => {
-                        splashScreen.style.opacity = '0';
-                        setTimeout(() => {
-                            splashScreen.remove();
-                            initLockScreen(); // TRIGGERS NEW SECURE LOCK
-                        }, 500);
-                    }, 600);
-                }
-            }, 300);
-        });
+                        splashScreen.remove();
+                        initLockScreen(); 
+                    }, 500);
+                }, 400);
+            }
+        }, 400);
+    };
+
+    // Bulletproof event binding for iOS
+    if(initBtn) {
+        initBtn.addEventListener('touchstart', startBootSequence, {passive: false});
+        initBtn.addEventListener('click', startBootSequence);
     }
 
     // --- SECURE LOCK SCREEN LOGIC ---
     function initLockScreen() {
+        const lockScreen = document.getElementById('lock-screen');
         lockScreen.style.display = 'flex';
         setTimeout(() => { lockScreen.style.opacity = '1'; }, 10);
 
@@ -68,54 +100,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const lockBtn = document.getElementById('lock-btn');
         const lockError = document.getElementById('lock-error');
 
-        // State 1: First time user
         if (!savedPin) {
             lockTitle.innerText = "INITIAL SETUP";
             lockSubtitle.innerText = "Create a new Master Key to encrypt your hub.";
             lockBtn.innerText = "REGISTER KEY";
-        } 
-        // State 2: Returning user
-        else {
+        } else {
             lockTitle.innerText = "SYSTEM LOCKED";
             lockSubtitle.innerText = "Enter your Master Key to proceed.";
             lockBtn.innerText = "AUTHENTICATE";
         }
 
-        lockBtn.addEventListener('click', () => {
+        const handleAuth = (e) => {
+            if(e) e.preventDefault();
             const val = lockInput.value.trim();
             if(!val) return;
-            sound1.play();
+            sound1.play().catch(()=>{});
 
             if (!savedPin) {
-                // Register new password
                 localStorage.setItem('efect_master_key', val);
                 unlockSystem();
             } else {
-                // Verify returning password
                 if (val === savedPin) {
                     unlockSystem();
                 } else {
                     lockError.style.display = 'block';
-                    lockInput.value = ''; // clear input
-                    // Shake animation for error
-                    lockScreen.querySelector('.modal-content').style.transform = 'translateX(-10px)';
-                    setTimeout(() => lockScreen.querySelector('.modal-content').style.transform = 'translateX(10px)', 100);
-                    setTimeout(() => lockScreen.querySelector('.modal-content').style.transform = 'translateX(0)', 200);
+                    lockInput.value = ''; 
+                    const mc = lockScreen.querySelector('.modal-content');
+                    mc.style.transform = 'translateX(-10px)';
+                    setTimeout(() => mc.style.transform = 'translateX(10px)', 100);
+                    setTimeout(() => mc.style.transform = 'translateX(0)', 200);
                 }
             }
-        });
+        };
 
-        // Allow pressing Enter on the keyboard
-        lockInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') lockBtn.click();
-        });
+        lockBtn.addEventListener('touchstart', handleAuth, {passive: false});
+        lockBtn.addEventListener('click', handleAuth);
+        lockInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleAuth(); });
     }
 
     function unlockSystem() {
+        const lockScreen = document.getElementById('lock-screen');
         lockScreen.style.opacity = '0';
         setTimeout(() => {
             lockScreen.style.display = 'none';
-            // Start main app features
             typeWriter(); 
             initDiagnostics(); 
             fetchGitHubUpdates();
@@ -133,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         text: 'Check out the EFECT Performance & Optimization Hub.',
                         url: window.location.href
                     });
-                } catch (err) { console.log('Share dismissed'); }
+                } catch (err) {}
             } else {
                 navigator.clipboard.writeText(window.location.href);
                 alert("Link copied to clipboard!");
@@ -172,11 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
         cmdInput.blur();
     });
 
-    // --- BUTTONS & MODALS ---
+    // --- MODALS ---
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
-            sound1.play();
+            sound1.play().catch(()=>{});
             const modal = document.getElementById(modalId);
             modal.style.display = 'flex';
             setTimeout(() => modal.style.opacity = '1', 10);
@@ -245,9 +272,7 @@ function initDiagnostics() {
     const battSpan = document.getElementById('batt-level');
     if ('getBattery' in navigator) {
         navigator.getBattery().then(battery => {
-            const updateBatt = () => {
-                battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`;
-            };
+            const updateBatt = () => { battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`; };
             updateBatt();
             battery.addEventListener('levelchange', updateBatt);
             battery.addEventListener('chargingchange', updateBatt);
