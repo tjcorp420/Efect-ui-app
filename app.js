@@ -137,22 +137,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-maps')?.addEventListener('click', () => window.open('https://fortnite.gg/creator/efect.lit', '_blank'));
 });
 
-// --- GITHUB API LIVE FETCH ---
+// --- GITHUB API LIVE FETCH (PROFILE-WIDE) ---
 async function fetchGitHubUpdates() {
     try {
-        // Automatically fetches the latest commit from your Optimizer Repo
-        const response = await fetch('https://api.github.com/repos/tjcorp420/EFECT-OPTIMIZER-UPDATES/commits');
-        const data = await response.json();
+        // Fetches all recent activity across your entire GitHub profile
+        const response = await fetch('https://api.github.com/users/tjcorp420/events/public');
+        const events = await response.json();
         
-        if(data && data[0]) {
-            const commitDate = new Date(data[0].commit.author.date).toLocaleDateString();
-            const commitMessage = data[0].commit.message;
-            document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-code-commit"></i> LATEST UPDATE (${commitDate}): ${commitMessage}`;
+        // Searches for the most recent time you pushed code to ANY repository
+        const lastPush = events.find(event => event.type === 'PushEvent');
+        
+        if(lastPush && lastPush.payload.commits.length > 0) {
+            // Cleans up the repo name (e.g., turns "tjcorp420/EFECT-AIM-TRAINER" into "EFECT AIM TRAINER")
+            let repoName = lastPush.repo.name.split('/')[1];
+            repoName = repoName.replace(/-/g, ' '); 
+            
+            const commitDate = new Date(lastPush.created_at).toLocaleDateString();
+            const commitMessage = lastPush.payload.commits[0].message;
+            
+            // Displays: LATEST UPDATE [REPO NAME] (DATE): MESSAGE
+            document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-code-commit"></i> LATEST UPDATE [${repoName}] (${commitDate}): ${commitMessage}`;
         }
     } catch (error) {
         document.getElementById('gh-update').innerHTML = `<i class="fa-solid fa-satellite-dish"></i> GITHUB LINK ACTIVE`;
     }
 }
+
 
 // --- REAL HARDWARE DIAGNOSTICS ---
 function initDiagnostics() {
