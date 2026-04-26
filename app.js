@@ -242,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupModal('btn-preview', 'preview-modal', 'macro-vid');
     setupModal('btn-fps-preview', 'fps-modal');
+    setupModal('btn-synergy', 'synergy-modal'); // <-- INJECTED SYNERGY TRIGGER
 
     document.getElementById('close-modal')?.addEventListener('click', () => {
         triggerClick();
@@ -258,6 +259,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (fm) fm.style.display = 'none'; }, 300);
     });
 
+    // <-- INJECTED SYNERGY CLOSE BUTTON
+    document.getElementById('close-synergy-modal')?.addEventListener('click', () => {
+        triggerClick();
+        const sm = document.getElementById('synergy-modal');
+        if (sm) sm.style.opacity = '0';
+        setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
+    });
+
     document.getElementById('btn-hub')?.addEventListener('click', () => {
         triggerClick();
         window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
@@ -267,7 +276,46 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerClick();
         window.open('https://fortnite.gg/creator/efect.lit', '_blank');
     });
+
+    // <-- INJECTED SYNERGY CALCULATION ENGINE
+    document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
+        triggerClick();
+        const gpu = parseInt(document.getElementById('syn-gpu').value);
+        const cpu = parseInt(document.getElementById('syn-cpu').value);
+        const per = parseInt(document.getElementById('syn-per').value);
+        
+        // Math algorithm to find bottleneck
+        const score = Math.floor((gpu * 0.4) + (cpu * 0.4) + (per * 0.2));
+        
+        const resultBox = document.getElementById('syn-result');
+        const scoreText = document.getElementById('syn-score-text');
+        const adviceText = document.getElementById('syn-advice');
+        
+        // Targets the SCORE text on the actual glass card
+        const cardScore = document.getElementById('btn-synergy')?.parentElement.querySelector('p:nth-of-type(2)'); 
+        
+        resultBox.style.display = 'block';
+        
+        // Simulating scan delay
+        scoreText.innerText = "CALC...";
+        adviceText.innerText = "Analyzing hardware polling rates and frame times...";
+        
+        setTimeout(() => {
+            triggerClick(); // Snap haptics when calculation finishes
+            scoreText.innerText = score;
+            if (cardScore) cardScore.innerHTML = `SCORE: <span style="color:#00ff00;">${score}/100</span>`;
+            
+            if (score >= 90) {
+                adviceText.innerText = "Elite hardware detected. Capable of stable 240+ FPS. Run EFECT Macros to bypass OS input latency.";
+            } else if (score >= 70) {
+                adviceText.innerText = "Solid build. CPU might bottleneck in end-games. Use EFECT FPS Booster to lock core threads.";
+            } else {
+                adviceText.innerText = "Hardware limits detected. Recommend EFECT Optimizer and setting all Fortnite settings to Performance Mode.";
+            }
+        }, 1500);
+    });
 });
+
 
 // --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
 async function fetchGitHubUpdates() {
