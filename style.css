@@ -11,8 +11,8 @@ html {
     overflow-x: hidden;
     cursor: crosshair;
     overscroll-behavior-y: none;
-    /* NEW: Smooth color shifting for the cheat code */
     transition: filter 1s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* --- SPLASH SCREEN STYLES --- */
@@ -51,6 +51,8 @@ html {
 #init-btn {
     width: 80%;
     max-width: 250px;
+    position: relative;
+    z-index: 10000;
 }
 
 /* --- MAIN UI STYLES --- */
@@ -63,6 +65,7 @@ html {
     background-size: 40px 40px;
     z-index: -1;
     transition: transform 0.1s ease-out; 
+    pointer-events: none; /* CRITICAL IOS FIX */
 }
 
 .container {
