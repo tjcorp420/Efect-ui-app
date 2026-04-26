@@ -10,13 +10,35 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// Update to your actual files
-const clickSound = new Audio('spckclick.mp3');
+// Corrected audio files based on your request
 const bootSound = new Audio('efectboot.mp3');
-clickSound.volume = 0.8;
+const clickSound = new Audio('sound1.mp3');
 bootSound.volume = 1.0;
+clickSound.volume = 0.8;
+
+// iOS Audio Unlocker
+document.body.addEventListener('touchstart', () => {
+    if(clickSound.currentTime === 0) {
+        clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(()=>{});
+    }
+}, { once: true });
+
+function triggerBoot() {
+    bootSound.currentTime = 0;
+    bootSound.play().catch(()=>{});
+}
+
+function triggerClick() {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(()=>{});
+    if (navigator.vibrate) navigator.vibrate(15);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    localStorage.removeItem('efect_monitor_unlocked'); // Force lock
+    const savedScore = localStorage.getItem('efect_synergy_score');
+    if (savedScore) document.getElementById('card-synergy-score').innerText = savedScore;
+
     // --- BOOT SPLASH & GYRO ---
     const initBtn = document.getElementById('init-btn');
     const splashScreen = document.getElementById('splash-screen');
@@ -24,10 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const loaderBar = document.getElementById('loader-bar');
 
     if(initBtn) {
-        initBtn.addEventListener('click', async () => {
-            // iOS Audio Unlocker & Boot Sound
-            bootSound.play().catch(()=>{});
-            
+        initBtn.onclick = async function() {
+            triggerBoot();
             initBtn.style.display = 'none'; 
             document.getElementById('loader-wrapper').style.display = 'block';
             
@@ -50,37 +70,35 @@ document.addEventListener('DOMContentLoaded', () => {
                         splashScreen.style.opacity = '0';
                         setTimeout(() => {
                             splashScreen.style.display = 'none';
-                            // Launch Password System instead of going straight to the app
                             initLockScreen(); 
                         }, 500);
                     }, 600);
                 }
             }, 300);
-        });
+        };
     }
 
     // --- SECURE LOCK SCREEN LOGIC ---
     function initLockScreen() {
-        const lockScreen = document.getElementById('lock-screen');
-        lockScreen.style.display = 'flex';
-        setTimeout(() => lockScreen.style.opacity = '1', 10);
-
+        const ls = document.getElementById('lock-screen');
         const savedPin = localStorage.getItem('efect_master_key');
-        const lockTitle = document.getElementById('lock-title');
-        const lockBtn = document.getElementById('lock-btn');
-        const lockInput = document.getElementById('lock-input');
+        const btn = document.getElementById('lock-btn');
+        const input = document.getElementById('lock-input');
+
+        ls.style.display = 'flex';
+        setTimeout(() => ls.style.opacity = '1', 10);
 
         if (!savedPin) {
-            lockTitle.innerText = "INITIAL SETUP";
+            document.getElementById('lock-title').innerText = "INITIAL SETUP";
             document.getElementById('lock-subtitle').innerText = "Create a Master Key to encrypt your Hub.";
-            lockBtn.innerText = "REGISTER KEY";
+            btn.innerText = "REGISTER KEY";
         }
 
-        lockBtn.onclick = function() {
-            const val = lockInput.value.trim();
-            if(!val) return;
-            clickSound.play().catch(()=>{});
-            
+        btn.onclick = function() {
+            const val = input.value.trim();
+            if (!val) return;
+            triggerClick();
+
             if (!savedPin) {
                 localStorage.setItem('efect_master_key', val);
                 unlockSystem();
@@ -88,30 +106,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 unlockSystem();
             } else {
                 document.getElementById('lock-error').style.display = 'block';
-                lockInput.value = '';
+                input.value = '';
             }
         };
     }
 
     function unlockSystem() {
-        const lockScreen = document.getElementById('lock-screen');
-        lockScreen.style.opacity = '0';
+        const ls = document.getElementById('lock-screen');
+        ls.style.opacity = '0';
         setTimeout(() => {
-            lockScreen.style.display = 'none';
+            ls.style.display = 'none';
             typeWriter(); 
             initDiagnostics(); 
-            startTelemetry(); // Start the live ping loop
+            startTelemetry(); 
+            scheduleNextSale();
         }, 400);
     }
 
-    // --- FIXED COMMAND CONSOLE LOGIC ---
+    // --- COMMAND CONSOLE LOGIC ---
     const consoleUI = document.getElementById('command-console');
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
 
     document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
     document.addEventListener('touchend', e => {
-        if (startY < 80 && e.changedTouches[0].clientY > startY + 60) {
+        if (startY < 300 && e.changedTouches[0].clientY > startY + 60) {
             consoleUI.style.top = '0';
             cmdInput.focus();
         }
@@ -119,18 +138,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     consoleUI.addEventListener('submit', function (e) {
         e.preventDefault(); 
+        triggerClick();
         const code = cmdInput.value.toLowerCase().replace(/\s+/g, '');
         
         if (code === 'efect.lit') {
+            triggerBoot();
             document.getElementById('secret-fps-card').style.display = 'flex';
-            alert("FPS OVERRIDE ACTIVE.");
         } else if (code === '420') {
+            triggerBoot();
             const hwCard = document.getElementById('hw-monitor-card');
             const hwBtn = document.getElementById('btn-hw-monitor');
-            const hwBadge = document.getElementById('hw-status-badge');
             hwCard.classList.remove('locked');
-            hwBadge.innerHTML = '<span class="dot"></span> ONLINE';
-            hwBadge.className = 'status online';
+            document.getElementById('hw-status-badge').innerHTML = '<span class="dot"></span> ONLINE';
+            document.getElementById('hw-status-badge').className = 'status online';
             hwBtn.classList.remove('disabled');
             hwBtn.removeAttribute('disabled');
             hwBtn.innerText = 'OPEN TELEMETRY';
@@ -149,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
-            clickSound.play().catch(()=>{});
+            triggerClick();
             const modal = document.getElementById(modalId);
             modal.style.display = 'flex';
             setTimeout(() => modal.style.opacity = '1', 10);
@@ -159,56 +179,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupModal('btn-preview', 'preview-modal', 'macro-vid');
     setupModal('btn-fps-preview', 'fps-modal');
+    setupModal('btn-synergy', 'synergy-modal');
 
-    document.getElementById('close-modal')?.addEventListener('click', () => {
-        document.getElementById('preview-modal').style.opacity = '0';
-        document.getElementById('macro-vid').pause();
-        setTimeout(() => document.getElementById('preview-modal').style.display = 'none', 300);
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            triggerClick();
+            const mod = this.closest('.modal-overlay');
+            mod.style.opacity = '0';
+            document.getElementById('macro-vid')?.pause();
+            setTimeout(() => mod.style.display = 'none', 300);
+        });
     });
 
-    document.getElementById('close-fps-modal')?.addEventListener('click', () => {
-        document.getElementById('fps-modal').style.opacity = '0';
-        setTimeout(() => document.getElementById('fps-modal').style.display = 'none', 300);
+    // Synergy Logic
+    document.getElementById('run-synergy-btn')?.addEventListener('click', function() {
+        triggerClick();
+        let score = Math.floor(Math.random() * (99 - 94) + 94);
+        document.getElementById('syn-result').style.display = 'block';
+        document.getElementById('syn-score-text').innerText = score;
+        document.getElementById('card-synergy-score').innerText = score;
+        localStorage.setItem('efect_synergy_score', score);
     });
 
-    document.getElementById('btn-hub')?.addEventListener('click', () => {
-        clickSound.play().catch(()=>{});
-        window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
-    });
+    document.getElementById('btn-hub')?.addEventListener('click', () => { triggerClick(); window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'); });
+    document.getElementById('btn-maps')?.addEventListener('click', () => { triggerClick(); window.open('https://fortnite.gg/creator/efect.lit', '_blank'); });
     
-    document.getElementById('btn-maps')?.addEventListener('click', () => {
-        clickSound.play().catch(()=>{});
-        window.open('https://fortnite.gg/creator/efect.lit', '_blank');
+    // Share Button
+    document.getElementById('share-btn')?.addEventListener('click', async () => {
+        triggerClick();
+        if (navigator.share) {
+            try { await navigator.share({ title: 'EFECT Suite', text: 'Check out the EFECT Performance Hub.', url: window.location.href }); } catch (err) {}
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Link copied to clipboard!");
+        }
     });
 });
 
 // --- REAL HARDWARE DIAGNOSTICS ---
 function initDiagnostics() {
-    // 1. Battery API
     const battSpan = document.getElementById('batt-level');
     if ('getBattery' in navigator) {
         navigator.getBattery().then(battery => {
-            const updateBatt = () => {
-                battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`;
-            };
+            const updateBatt = () => { battSpan.innerText = `${Math.round(battery.level * 100)}% ${battery.charging ? '⚡' : ''}`; };
             updateBatt();
             battery.addEventListener('levelchange', updateBatt);
             battery.addEventListener('chargingchange', updateBatt);
-        }).catch(() => {
-            battSpan.innerText = "SECURED";
-        });
-    } else {
-        battSpan.innerText = "HIDDEN"; // Fallback for iOS Safari
-    }
+        }).catch(() => { battSpan.innerText = "SECURED"; });
+    } else { battSpan.innerText = "HIDDEN"; }
 
-    // 2. Network API
     const netSpan = document.getElementById('net-status');
     const updateNet = () => {
-        if (navigator.connection && navigator.connection.effectiveType) {
-            netSpan.innerText = navigator.connection.effectiveType.toUpperCase();
-        } else {
-            netSpan.innerText = navigator.onLine ? 'ONLINE' : 'OFFLINE';
-        }
+        if (navigator.connection && navigator.connection.effectiveType) { netSpan.innerText = navigator.connection.effectiveType.toUpperCase(); } 
+        else { netSpan.innerText = navigator.onLine ? 'ONLINE' : 'OFFLINE'; }
     };
     updateNet();
     window.addEventListener('online', updateNet);
@@ -222,10 +245,7 @@ function startMatrix() {
     document.body.appendChild(canvas);
     canvas.style.display = 'block';
     const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const fontSize = 16;
     const columns = canvas.width / fontSize;
@@ -236,7 +256,6 @@ function startMatrix() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#00ff00";
         ctx.font = fontSize + "px arial";
-
         for (let i = 0; i < drops.length; i++) {
             const text = characters.charAt(Math.floor(Math.random() * characters.length));
             ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -256,15 +275,14 @@ function handleGyro(e) {
 function typeWriter() {
     if (i < text.length) {
         document.getElementById("typewriter").innerHTML += text.charAt(i);
-        i++;
-        setTimeout(typeWriter, speed);
+        i++; setTimeout(typeWriter, speed);
     } else { startTerminalLog(); }
 }
 
 function startTerminalLog() {
     const log = document.getElementById("terminal-log");
     setInterval(() => {
-        log.innerText = "> " + systemLogs[logIndex];
+        if (log) log.innerText = "> " + systemLogs[logIndex];
         logIndex = (logIndex + 1) % systemLogs.length;
     }, 2000);
 }
@@ -272,14 +290,29 @@ function startTerminalLog() {
 function startTelemetry() {
     const pingElement = document.getElementById("live-ping");
     if (!pingElement) return;
-    setInterval(() => {
-        pingElement.innerText = `Simulated Latency: ${(Math.random() * 0.8 + 0.1).toFixed(2)}ms`;
-    }, 120); 
+    setInterval(() => { pingElement.innerText = `Simulated Latency: ${(Math.random() * 0.8 + 0.1).toFixed(2)}ms`; }, 120); 
 }
 
+// Sales Engine with Barcode
+function triggerRandomSale() {
+    const toast = document.getElementById('sales-toast');
+    const locs = ["Texas", "London", "Florida", "California", "Germany"];
+    const products = ["Efect Pro Elite", "Efect Macro Engine", "Efect FPS Booster"];
+    const l = locs[Math.floor(Math.random() * locs.length)];
+    const p = products[Math.floor(Math.random() * products.length)];
+    const barcodeVal = Math.floor(Math.random() * 900000000) + 100000000;
+    const orderNum = Math.floor(Math.random() * 90000) + 10000;
+    
+    document.getElementById('sale-desc').innerHTML = `User from <strong>${l}</strong> secured <strong>${p}</strong><div class="barcode">*${barcodeVal}*</div><span style="font-size:0.7rem; color:#888;">[Order #${orderNum}]</span>`;
+    toast.classList.add('show');
+    triggerClick();
+    setTimeout(() => { toast.classList.remove('show'); scheduleNextSale(); }, 6000); 
+}
+function scheduleNextSale() { setTimeout(triggerRandomSale, 25000); }
+
+// Particles
 document.addEventListener('click', e => {
     if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-    try { clickSound.play().catch(()=>{}); } catch(err){}
     for (let j = 0; j < 8; j++) {
         const p = document.createElement('div');
         p.classList.add('particle');
