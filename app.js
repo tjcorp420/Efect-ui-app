@@ -10,9 +10,8 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// THE SOUND FIX: Defined the user's new audio files with perfect mapping
-const clickSound = new Audio('spckclick.mp3'); // Snappy generic click
-const bootSound = new Audio('efectboot.mp3');   // Deep mechanical boot
+const clickSound = new Audio('spckclick.mp3'); 
+const bootSound = new Audio('efectboot.mp3');   
 clickSound.volume = 0.6;
 bootSound.volume = 0.6;
 
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initBtn.addEventListener('click', async () => {
             if (isBooting) return;
             isBooting = true;
-            bootSound.play().catch(() => {}); // Play the deep boot sound
+            bootSound.play().catch(() => {}); 
             
             initBtn.style.display = 'none'; 
             if (bootHud) bootHud.style.display = 'flex';
@@ -118,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!lockInput) return;
             const val = lockInput.value.trim();
             if (!val) return;
-            clickSound.play().catch(() => {}); // Play the snappy click sound
+            clickSound.play().catch(() => {});
 
             if (!savedPin) {
                 localStorage.setItem('efect_master_key', val);
@@ -173,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-        // --- COMMAND CONSOLE LOGIC ---
+    // --- COMMAND CONSOLE LOGIC ---
     const consoleUI = document.getElementById('command-console');
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
@@ -181,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (consoleUI && cmdInput) {
         document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
         document.addEventListener('touchend', e => {
-            // FIX: Expanded the grab zone from 80px to 250px so you don't fight the iPhone notch
             if (startY < 250 && e.changedTouches[0].clientY > startY + 40) {
                 consoleUI.style.top = '0';
                 cmdInput.focus();
@@ -208,12 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // --- MODALS ---
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
-            clickSound.play().catch(() => {}); // Snap
+            clickSound.play().catch(() => {});
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.style.display = 'flex';
@@ -240,12 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btn-hub')?.addEventListener('click', () => {
-        clickSound.play().catch(() => {}); // Snap
+        clickSound.play().catch(() => {});
         window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
     });
 
     document.getElementById('btn-maps')?.addEventListener('click', () => {
-        clickSound.play().catch(() => {}); // Snap
+        clickSound.play().catch(() => {});
         window.open('https://fortnite.gg/creator/efect.lit', '_blank');
     });
 });
@@ -353,8 +350,8 @@ function startMatrix() {
 
 // --- CORE UTILS ---
 function handleGyro(e) {
-    const grid = document.querySelector('.background-grid');
-    if (grid) grid.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
+    const galaxy = document.querySelector('.galaxy-wrapper');
+    if (galaxy) galaxy.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
 }
 
 function typeWriter() {
@@ -376,8 +373,22 @@ function startTerminalLog() {
     }
 }
 
+// --- LIQUID RIPPLES AND PARTICLES ---
 document.addEventListener('click', e => {
-    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+    // 1. Never spawn effects if user is just typing their password
+    if (e.target.tagName === 'INPUT') return;
+
+    // 2. Dynamic Ripple Effect (Expands anywhere you touch)
+    const ripple = document.createElement('div');
+    ripple.classList.add('ripple');
+    ripple.style.left = e.pageX + 'px';
+    ripple.style.top = e.pageY + 'px';
+    document.body.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600); // Cleans itself up
+
+    // 3. Particle Explosion (Only on background, not on buttons)
+    if (e.target.tagName === 'BUTTON') return;
+    
     for (let j = 0; j < 8; j++) {
         const p = document.createElement('div');
         p.classList.add('particle');
