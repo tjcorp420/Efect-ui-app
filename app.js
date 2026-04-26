@@ -24,79 +24,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const scanner = document.getElementById('scanner');
     let isBooting = false;
 
-    const startBootSequence = async (e) => {
-        if(e) e.preventDefault(); 
-        if(isBooting) return;
-        isBooting = true;
-        sound1.play().catch(()=>{}); // Safe play
-        
-        if(initBtn) initBtn.style.display = 'none'; 
-        if(bootHud) bootHud.style.display = 'flex';
-        if(scanner) scanner.style.display = 'block';
-        setTimeout(() => { if(bootHud) bootHud.style.opacity = '1'; }, 10);
-        
-        // Request Gyro
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            try {
-                const permissionState = await DeviceOrientationEvent.requestPermission();
-                if (permissionState === 'granted') window.addEventListener('deviceorientation', handleGyro);
-            } catch (err) {}
-        } else { window.addEventListener('deviceorientation', handleGyro); }
+    if (initBtn) {
+        initBtn.addEventListener('click', async () => {
+            if (isBooting) return;
+            isBooting = true;
+            sound1.play().catch(() => {}); 
+            
+            initBtn.style.display = 'none'; 
+            if (bootHud) bootHud.style.display = 'flex';
+            if (scanner) scanner.style.display = 'block';
+            setTimeout(() => { if(bootHud) bootHud.style.opacity = '1'; }, 10);
+            
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState === 'granted') window.addEventListener('deviceorientation', handleGyro);
+                } catch (err) {}
+            } else { window.addEventListener('deviceorientation', handleGyro); }
 
-        // HUD Data Streamers
-        const hexStream = setInterval(() => {
-            const hHex = document.getElementById('hud-hex');
-            const hHex2 = document.getElementById('hud-hex2');
-            const hVolt = document.getElementById('hud-volt');
-            const hTemp = document.getElementById('hud-temp');
-            if(hHex) hHex.innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
-            if(hHex2) hHex2.innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
-            if(hVolt) hVolt.innerText = (Math.random() * (1.35 - 1.15) + 1.15).toFixed(2) + 'V';
-            if(hTemp) hTemp.innerText = Math.floor(Math.random() * (65 - 35) + 35) + '°C';
-        }, 100);
+            const hexStream = setInterval(() => {
+                const hHex = document.getElementById('hud-hex');
+                const hHex2 = document.getElementById('hud-hex2');
+                const hVolt = document.getElementById('hud-volt');
+                const hTemp = document.getElementById('hud-temp');
+                if (hHex) hHex.innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+                if (hHex2) hHex2.innerText = '0x' + Math.floor(Math.random()*16777215).toString(16).toUpperCase();
+                if (hVolt) hVolt.innerText = (Math.random() * (1.35 - 1.15) + 1.15).toFixed(2) + 'V';
+                if (hTemp) hTemp.innerText = Math.floor(Math.random() * (65 - 35) + 35) + '°C';
+            }, 100);
 
-        let bootIdx = 0;
-        const bootSteps = [
-            "INJECTING_KERNEL_HOOKS...",
-            "BYPASSING_LATENCY_GATES...",
-            "ALLOCATING_MEMORY...",
-            "SECURING_ENCRYPTION...",
-            "LINKING_HARDWARE...",
-            "SYSTEM_READY"
-        ];
+            let bootIdx = 0;
+            const bootSteps = [
+                "INJECTING_KERNEL_HOOKS...",
+                "BYPASSING_LATENCY_GATES...",
+                "ALLOCATING_MEMORY...",
+                "SECURING_ENCRYPTION...",
+                "LINKING_HARDWARE...",
+                "SYSTEM_READY"
+            ];
 
-        const bootInterval = setInterval(() => {
-            if (bootIdx < 6) {
-                if(splashTerminal) splashTerminal.innerHTML = `> ${bootSteps[bootIdx]}`;
-                const seg = document.getElementById(`seg-${bootIdx + 1}`);
-                if(seg) seg.classList.add('active');
-                bootIdx++;
-            } else {
-                clearInterval(bootInterval);
-                clearInterval(hexStream);
-                
-                setTimeout(() => {
-                    if(splashScreen) splashScreen.style.opacity = '0';
+            const bootInterval = setInterval(() => {
+                if (bootIdx < 6) {
+                    if (splashTerminal) splashTerminal.innerHTML = `> ${bootSteps[bootIdx]}`;
+                    const seg = document.getElementById(`seg-${bootIdx + 1}`);
+                    if (seg) seg.classList.add('active');
+                    bootIdx++;
+                } else {
+                    clearInterval(bootInterval);
+                    clearInterval(hexStream);
+                    
                     setTimeout(() => {
-                        if(splashScreen) splashScreen.remove();
-                        initLockScreen(); 
-                    }, 500);
-                }, 400);
-            }
-        }, 400);
-    };
-
-    // Bulletproof event binding for iOS
-    if(initBtn) {
-        initBtn.addEventListener('touchstart', startBootSequence, {passive: false});
-        initBtn.addEventListener('click', startBootSequence);
+                        if (splashScreen) splashScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            if (splashScreen) splashScreen.remove();
+                            initLockScreen(); 
+                        }, 500);
+                    }, 400);
+                }
+            }, 400);
+        });
     }
 
     // --- SECURE LOCK SCREEN LOGIC ---
     function initLockScreen() {
         const lockScreen = document.getElementById('lock-screen');
-        if(!lockScreen) {
-            unlockSystem(); // Failsafe if lock screen missing from HTML
+        if (!lockScreen) {
+            unlockSystem(); 
             return;
         }
 
@@ -111,21 +104,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const lockError = document.getElementById('lock-error');
 
         if (!savedPin) {
-            if(lockTitle) lockTitle.innerText = "INITIAL SETUP";
-            if(lockSubtitle) lockSubtitle.innerText = "Create a new Master Key to encrypt your hub.";
-            if(lockBtn) lockBtn.innerText = "REGISTER KEY";
+            if (lockTitle) lockTitle.innerText = "INITIAL SETUP";
+            if (lockSubtitle) lockSubtitle.innerText = "Create a new Master Key to encrypt your hub.";
+            if (lockBtn) lockBtn.innerText = "REGISTER KEY";
         } else {
-            if(lockTitle) lockTitle.innerText = "SYSTEM LOCKED";
-            if(lockSubtitle) lockSubtitle.innerText = "Enter your Master Key to proceed.";
-            if(lockBtn) lockBtn.innerText = "AUTHENTICATE";
+            if (lockTitle) lockTitle.innerText = "SYSTEM LOCKED";
+            if (lockSubtitle) lockSubtitle.innerText = "Enter your Master Key to proceed.";
+            if (lockBtn) lockBtn.innerText = "AUTHENTICATE";
         }
 
-        const handleAuth = (e) => {
-            if(e) e.preventDefault();
-            if(!lockInput) return;
+        const handleAuth = () => {
+            if (!lockInput) return;
             const val = lockInput.value.trim();
-            if(!val) return;
-            sound1.play().catch(()=>{});
+            if (!val) return;
+            sound1.play().catch(() => {});
 
             if (!savedPin) {
                 localStorage.setItem('efect_master_key', val);
@@ -134,10 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (val === savedPin) {
                     unlockSystem();
                 } else {
-                    if(lockError) lockError.style.display = 'block';
+                    if (lockError) lockError.style.display = 'block';
                     lockInput.value = ''; 
                     const mc = lockScreen.querySelector('.modal-content');
-                    if(mc) {
+                    if (mc) {
                         mc.style.transform = 'translateX(-10px)';
                         setTimeout(() => mc.style.transform = 'translateX(10px)', 100);
                         setTimeout(() => mc.style.transform = 'translateX(0)', 200);
@@ -146,20 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        if(lockBtn) {
-            lockBtn.addEventListener('touchstart', handleAuth, {passive: false});
-            lockBtn.addEventListener('click', handleAuth);
-        }
-        if(lockInput) {
-            lockInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleAuth(); });
-        }
+        if (lockBtn) lockBtn.addEventListener('click', handleAuth);
+        if (lockInput) lockInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAuth(); });
     }
 
     function unlockSystem() {
         const lockScreen = document.getElementById('lock-screen');
-        if(lockScreen) lockScreen.style.opacity = '0';
+        if (lockScreen) lockScreen.style.opacity = '0';
         setTimeout(() => {
-            if(lockScreen) lockScreen.style.display = 'none';
+            if (lockScreen) lockScreen.style.display = 'none';
             typeWriter(); 
             initDiagnostics(); 
             fetchGitHubUpdates();
@@ -205,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (code === 'efect.lit') {
                 const fCard = document.getElementById('secret-fps-card');
-                if(fCard) fCard.style.display = 'flex';
+                if (fCard) fCard.style.display = 'flex';
                 alert("FPS OVERRIDE ACTIVE.");
             } else if (code === 'color_override') {
                 document.body.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
@@ -223,13 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
-            sound1.play().catch(()=>{});
+            sound1.play().catch(() => {});
             const modal = document.getElementById(modalId);
-            if(modal) {
+            if (modal) {
                 modal.style.display = 'flex';
                 setTimeout(() => modal.style.opacity = '1', 10);
             }
-            if(vidId) document.getElementById(vidId)?.play();
+            if (vidId) document.getElementById(vidId)?.play();
         });
     };
 
@@ -238,15 +225,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('close-modal')?.addEventListener('click', () => {
         const pm = document.getElementById('preview-modal');
-        if(pm) pm.style.opacity = '0';
+        if (pm) pm.style.opacity = '0';
         document.getElementById('macro-vid')?.pause();
-        setTimeout(() => { if(pm) pm.style.display = 'none'; }, 300);
+        setTimeout(() => { if (pm) pm.style.display = 'none'; }, 300);
     });
 
     document.getElementById('close-fps-modal')?.addEventListener('click', () => {
         const fm = document.getElementById('fps-modal');
-        if(fm) fm.style.opacity = '0';
-        setTimeout(() => { if(fm) fm.style.display = 'none'; }, 300);
+        if (fm) fm.style.opacity = '0';
+        setTimeout(() => { if (fm) fm.style.display = 'none'; }, 300);
     });
 
     document.getElementById('btn-hub')?.addEventListener('click', () => window.open('https://efectmacrosxtweaks.netlify.app/', '_blank'));
@@ -277,7 +264,7 @@ async function fetchGitHubUpdates() {
         const events = await response.json();
         const lastPush = events.find(event => event.type === 'PushEvent' && event.payload && event.payload.commits && event.payload.commits.length > 0);
         
-        if(lastPush) {
+        if (lastPush) {
             let repoName = lastPush.repo.name.split('/')[1].replace(/-/g, ' '); 
             const commitDate = new Date(lastPush.created_at).toLocaleDateString();
             const commitMessage = lastPush.payload.commits[0].message;
@@ -357,13 +344,13 @@ function startMatrix() {
 // --- CORE UTILS ---
 function handleGyro(e) {
     const grid = document.querySelector('.background-grid');
-    if(grid) grid.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
+    if (grid) grid.style.transform = `translate(${e.gamma/1.5}px, ${(e.beta-45)/1.5}px)`;
 }
 
 function typeWriter() {
     if (i < text.length) {
         const tw = document.getElementById("typewriter");
-        if(tw) tw.innerHTML += text.charAt(i);
+        if (tw) tw.innerHTML += text.charAt(i);
         i++;
         setTimeout(typeWriter, speed);
     } else { startTerminalLog(); }
@@ -371,7 +358,7 @@ function typeWriter() {
 
 function startTerminalLog() {
     const log = document.getElementById("terminal-log");
-    if(log) {
+    if (log) {
         setInterval(() => {
             log.innerText = "> " + systemLogs[logIndex];
             logIndex = (logIndex + 1) % systemLogs.length;
