@@ -108,7 +108,6 @@
         
         .btn-stack { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
         
-        /* Updated .neon-btn so <a> tags behave exactly like <button> tags visually */
         .neon-btn {
             display: flex; align-items: center; justify-content: center; box-sizing: border-box; background: transparent; 
             color: #00ff00; border: 1px solid #00ff00; padding: 0.8rem; font-family: 'Fira Code', monospace; 
@@ -218,7 +217,7 @@
             <video id="macro-vid" controls loop playsinline muted style="width:100%; border:1px solid #00ff00; border-radius:8px; margin-bottom:1rem;">
                 <source src="preview.mp4" type="video/mp4">
             </video>
-            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn">Get Efect Pro Macro</a>
+            <a href="https://payhip.com/b/0TOjr" target="_blank" class="neon-btn buy-btn" onclick="triggerClick()">Get Efect Pro Macro</a>
         </div>
     </div>
 
@@ -227,7 +226,7 @@
             <div class="close-hitbox"><span class="close-btn" style="color:#fff;">&times;</span></div>
             <h2 style="color: #fff; margin-top: 0; text-shadow: 0 0 10px #fff;">FPS Booster UI</h2>
             <img src="fps-ui.png" alt="FPS Hub UI" class="modal-img" style="border-color: #fff; width:100%; border-radius:8px;">
-            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="background: #fff; color: #000; border: none; margin-top:1rem;">Get Efect FPS Booster</a>
+            <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="background: #fff; color: #000; border: none; margin-top:1rem;" onclick="triggerClick()">Get Efect FPS Booster</a>
         </div>
     </div>
 
@@ -286,7 +285,7 @@
                 <h2>Efect Macros & Tweaks</h2>
                 <p>Zero-delay system tweaks, high-precision automation, and ultimate latency reduction.</p>
                 <div class="btn-stack">
-                    <a href="https://efectmacrosxtweaks.netlify.app/" target="_blank" class="neon-btn">Access Hub</a>
+                    <a href="https://efectmacrosxtweaks.netlify.app/" target="_blank" class="neon-btn" onclick="triggerClick()">Access Hub</a>
                     <button id="btn-preview" class="neon-btn secondary-btn">Watch Preview</button>
                 </div>
             </div>
@@ -299,7 +298,7 @@
                 <h2 style="color: #fff;">Efect FPS Booster</h2>
                 <p style="color: #ccc;">Maximum frame rate unlocked. Background processes terminated.</p>
                 <div class="btn-stack">
-                    <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="color: #000; background: #fff; border-color: #fff;">Engage</a>
+                    <a href="https://payhip.com/b/EQIrd" target="_blank" class="neon-btn" style="color: #000; background: #fff; border-color: #fff;" onclick="triggerClick()">Engage</a>
                     <button id="btn-fps-preview" class="neon-btn secondary-btn" style="border-color: #fff; color: #fff;">View UI</button>
                 </div>
             </div>
@@ -311,7 +310,7 @@
                 </div>
                 <h2>Efect Fortnite Maps</h2>
                 <p>Official custom maps, precision aim trainers, and competitive practice arenas.</p>
-                <a href="https://fortnite.gg/creator/efect.lit" target="_blank" class="neon-btn">View Maps</a>
+                <a href="https://fortnite.gg/creator/efect.lit" target="_blank" class="neon-btn" onclick="triggerClick()">View Maps</a>
             </div>
 
             <div class="glass-card">
@@ -347,26 +346,19 @@
     </div>
 
     <script>
-        // --- AUDIO ENGINE SECURE UNLOCK ---
-        const bootSound = new Audio('efectboot.mp3');
-        const clickSound = new Audio('sound1.mp3');
-        let audioUnlocked = false;
-
-        function unlockAudio() {
-            if (audioUnlocked) return;
-            bootSound.play().then(() => { bootSound.pause(); bootSound.currentTime = 0; }).catch(()=>{});
-            clickSound.play().then(() => { clickSound.pause(); clickSound.currentTime = 0; }).catch(()=>{});
-            audioUnlocked = true;
-            document.removeEventListener('touchstart', unlockAudio);
-            document.removeEventListener('click', unlockAudio);
-        }
-        document.addEventListener('touchstart', unlockAudio);
-        document.addEventListener('click', unlockAudio);
+        // --- BULLETPROOF AUDIO ENGINE ---
+        // Names match your exact files. Force preload so there is zero delay.
+        const bootSound = new Audio('boot.mp3');
+        const clickSound = new Audio('click.mp3');
+        bootSound.preload = 'auto';
+        clickSound.preload = 'auto';
 
         function triggerClick() {
-            if(audioUnlocked) {
-                clickSound.currentTime = 0;
-                clickSound.play().catch(()=>{});
+            // Play click sound strictly on demand
+            clickSound.currentTime = 0;
+            let playPromise = clickSound.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => { console.log("Click sound blocked by browser:", error); });
             }
             if (navigator.vibrate) navigator.vibrate(15);
         }
@@ -389,8 +381,13 @@
 
             if(initBtn) {
                 initBtn.addEventListener('click', function(e) {
-                    if(audioUnlocked) bootSound.play().catch(console.error);
-                    triggerClick();
+                    // DIRECT USER INTERACTION: Boot sound will play here safely.
+                    bootSound.currentTime = 0;
+                    let playPromise = bootSound.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => { console.log("Boot sound blocked by browser:", error); });
+                    }
+                    if (navigator.vibrate) navigator.vibrate(25);
                     
                     initBtn.style.display = 'none'; 
                     document.getElementById('loader-wrapper').style.display = 'block';
@@ -476,7 +473,7 @@
                 }
             });
 
-            closeBtn.addEventListener('click', closeConsole);
+            closeBtn.addEventListener('click', () => { triggerClick(); closeConsole(); });
             function closeConsole() { consoleUI.style.top = '-140px'; cmdInput.blur(); }
 
             consoleUI.addEventListener('submit', function (e) {
@@ -605,7 +602,11 @@
             document.getElementById('sale-desc').innerHTML = `User from <strong>${l}</strong> secured <strong>${p}</strong><br><span style="color:#00ff00; font-family:monospace; text-shadow:0 0 8px #00ff00;">[IP: ${ip}]</span>`;
             
             toast.classList.add('show');
-            if(audioUnlocked) clickSound.play().catch(()=>{});
+            
+            // Play click sound when sale pops up IF user has already interacted with page
+            let playPromise = clickSound.play();
+            if (playPromise !== undefined) playPromise.catch(()=>{});
+            
             setTimeout(() => { toast.classList.remove('show'); scheduleNextSale(); }, 6000); 
         }
         function scheduleNextSale() { setTimeout(triggerRandomSale, 25000); }
