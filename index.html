@@ -93,43 +93,62 @@
         </div>
     </div>
 
-        <div id="synergy-modal" class="modal-overlay">
+    <div id="synergy-modal" class="modal-overlay">
         <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 500px;">
             <span class="close-btn" id="close-synergy-modal">&times;</span>
             <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">Hardware Analyzer</h2>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Select your exact rig to calculate latency bottlenecks and true FPS potential.</p>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Type or select your exact rig to calculate true latency potential.</p>
             
             <div style="text-align: left; margin-bottom: 12px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">GPU TIER:</label>
-                <select id="syn-gpu" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="30">GTX 1060 / RX 580</option>
-                    <option value="50">RTX 2060 / RX 6600</option>
-                    <option value="70">RTX 3060 / RX 7600</option>
-                    <option value="85" selected>RTX 4060 Ti / RTX 3080</option>
-                    <option value="95">RTX 4070 / RX 7900 XT</option>
-                    <option value="100">RTX 4090 / RX 7900 XTX</option>
-                </select>
+                <label style="color: #00ff00; font-size: 0.8rem;">EXACT GPU:</label>
+                <input list="gpu-list" id="syn-gpu" placeholder="Search GPU (e.g. RTX 4060 Ti)" style="width: 100%; box-sizing: border-box; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                <datalist id="gpu-list">
+                    <option value="NVIDIA RTX 4090">
+                    <option value="NVIDIA RTX 4080 Super">
+                    <option value="NVIDIA RTX 4070 Ti">
+                    <option value="NVIDIA RTX 4060 Ti">
+                    <option value="NVIDIA RTX 3090">
+                    <option value="NVIDIA RTX 3080">
+                    <option value="NVIDIA RTX 3070">
+                    <option value="NVIDIA RTX 3060">
+                    <option value="NVIDIA RTX 2060">
+                    <option value="NVIDIA GTX 1660 Super">
+                    <option value="AMD RX 7900 XTX">
+                    <option value="AMD RX 7800 XT">
+                    <option value="AMD RX 6700 XT">
+                </datalist>
             </div>
 
             <div style="text-align: left; margin-bottom: 12px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">CPU TIER:</label>
-                <select id="syn-cpu" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="40">i7-8700K / Ryzen 3600</option>
-                    <option value="65">i5-12400F / Ryzen 5600X</option>
-                    <option value="85">i5-13600K / Ryzen 7700X</option>
-                    <option value="95" selected>i5-14600K / Ryzen 7800X3D</option>
-                    <option value="100">i9-14900K / Ryzen 7950X3D</option>
-                </select>
+                <label style="color: #00ff00; font-size: 0.8rem;">EXACT CPU:</label>
+                <input list="cpu-list" id="syn-cpu" placeholder="Search CPU (e.g. i5-14600K)" style="width: 100%; box-sizing: border-box; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                <datalist id="cpu-list">
+                    <option value="Intel i9-14900K">
+                    <option value="Intel i7-14700K">
+                    <option value="Intel i5-14600K">
+                    <option value="Intel i9-13900K">
+                    <option value="Intel i5-13600K">
+                    <option value="Intel i5-12400F">
+                    <option value="AMD Ryzen 7 7800X3D">
+                    <option value="AMD Ryzen 9 7950X3D">
+                    <option value="AMD Ryzen 5 7600X">
+                    <option value="AMD Ryzen 7 5800X3D">
+                    <option value="AMD Ryzen 5 5600X">
+                </datalist>
             </div>
 
             <div style="text-align: left; margin-bottom: 20px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">PERIPHERALS:</label>
-                <select id="syn-per" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="30">Basic Office (60Hz / Membrane)</option>
-                    <option value="70">Standard Gaming (1000Hz / Mech)</option>
-                    <option value="95">Pro Esports (4K-8K Polling / Optical)</option>
-                    <option value="100" selected>EFECT Peak (Apex Pro Mini / Superlight 2 / Hex)</option>
-                </select>
+                <label style="color: #00ff00; font-size: 0.8rem;">MAIN PERIPHERAL:</label>
+                <input list="per-list" id="syn-per" placeholder="Search Gear (e.g. Apex Pro)" style="width: 100%; box-sizing: border-box; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                <datalist id="per-list">
+                    <option value="SteelSeries Apex Pro Mini">
+                    <option value="Logitech G Pro X Superlight 2">
+                    <option value="Wooting 60HE">
+                    <option value="Razer Pro Click / Huntsman">
+                    <option value="Scuf / Hex Gaming Controller">
+                    <option value="Standard Mechanical Keyboard">
+                    <option value="Basic Office Mouse/Keyboard">
+                </datalist>
             </div>
 
             <div id="syn-result" style="display: none; margin-bottom: 15px; padding: 15px; border: 1px dashed #00ff00; background: rgba(0,255,0,0.1);">

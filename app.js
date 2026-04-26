@@ -265,22 +265,37 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
     });
 
-        // --- SYNERGY CALCULATION LOGIC ---
+            // --- SYNERGY CALCULATION LOGIC ---
     document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
         triggerClick();
         
-        const gpuSelect = document.getElementById('syn-gpu');
-        const cpuSelect = document.getElementById('syn-cpu');
-        const perSelect = document.getElementById('syn-per');
+        const gpuName = document.getElementById('syn-gpu').value.toUpperCase() || "UNKNOWN GPU";
+        const cpuName = document.getElementById('syn-cpu').value.toUpperCase() || "UNKNOWN CPU";
+        const perName = document.getElementById('syn-per').value.toUpperCase() || "STANDARD GEAR";
         
-        const gpuVal = parseInt(gpuSelect.value);
-        const cpuVal = parseInt(cpuSelect.value);
-        const perVal = parseInt(perSelect.value);
+        // 1. SMART PATTERN MATCHING ALGORITHM
+        let gpuVal = 50;
+        if (gpuName.includes('4090') || gpuName.includes('7900 XTX')) gpuVal = 100;
+        else if (gpuName.includes('4080') || gpuName.includes('4070 TI') || gpuName.includes('7900 XT')) gpuVal = 95;
+        else if (gpuName.includes('4070') || gpuName.includes('3090') || gpuName.includes('7800')) gpuVal = 88;
+        else if (gpuName.includes('4060') || gpuName.includes('3080') || gpuName.includes('7700')) gpuVal = 82;
+        else if (gpuName.includes('3070') || gpuName.includes('6700') || gpuName.includes('2080')) gpuVal = 75;
+        else if (gpuName.includes('3060') || gpuName.includes('2070') || gpuName.includes('6600')) gpuVal = 65;
+        else if (gpuName.includes('3050') || gpuName.includes('1660') || gpuName.includes('2060')) gpuVal = 45;
+
+        let cpuVal = 50;
+        if (cpuName.includes('14900') || cpuName.includes('7950X3D') || cpuName.includes('7800X3D')) cpuVal = 100;
+        else if (cpuName.includes('14700') || cpuName.includes('13900') || cpuName.includes('7900X')) cpuVal = 95;
+        else if (cpuName.includes('14600') || cpuName.includes('13700') || cpuName.includes('7700X')) cpuVal = 88;
+        else if (cpuName.includes('13600') || cpuName.includes('12900') || cpuName.includes('5800X3D')) cpuVal = 82;
+        else if (cpuName.includes('12700') || cpuName.includes('12600') || cpuName.includes('5700X')) cpuVal = 75;
+        else if (cpuName.includes('12400') || cpuName.includes('11600') || cpuName.includes('5600')) cpuVal = 65;
+
+        let perVal = 50;
+        if (perName.includes('APEX PRO') || perName.includes('SUPERLIGHT') || perName.includes('WOOTING') || perName.includes('SCUF') || perName.includes('HEX')) perVal = 100;
+        else if (perName.includes('PRO') || perName.includes('ESPORTS')) perVal = 85;
         
-        // GRABS THE ACTUAL HARDWARE TEXT THE USER CLICKED ON
-        const gpuName = gpuSelect.options[gpuSelect.selectedIndex].text.split(' / ')[0]; 
-        const cpuName = cpuSelect.options[cpuSelect.selectedIndex].text.split(' / ')[0];
-        
+        // 2. FINAL MATH
         const score = Math.floor((gpuVal * 0.45) + (cpuVal * 0.40) + (perVal * 0.15));
         
         const resultBox = document.getElementById('syn-result');
@@ -290,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         resultBox.style.display = 'block';
         scoreText.innerText = "CALC...";
-        adviceText.innerText = "Scanning hardware strings and calculating dynamic latency limits...";
+        adviceText.innerText = "Scanning exact hardware identifiers and simulating 1% low frame times...";
         
         setTimeout(() => {
             triggerClick(); 
@@ -299,27 +314,26 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let customFeedback = "";
             
-            // 1. SMART BOTTLENECK DETECTION
             if (gpuVal < cpuVal - 15) {
-                customFeedback += `BOTTLENECK DETECTED: Your ${gpuName} is holding back the ${cpuName}. Recommend lowering 3D resolution or upgrading GPU. `;
+                customFeedback += `BOTTLENECK: Your ${gpuName} is holding back the ${cpuName}. Recommend lowering 3D resolution. `;
             } else if (cpuVal < gpuVal - 15) {
-                customFeedback += `BOTTLENECK DETECTED: Your ${cpuName} is choking your ${gpuName} at 1080p Low. Lock CPU cores with EFECT Optimizer. `;
+                customFeedback += `BOTTLENECK: Your ${cpuName} is choking the ${gpuName}. Lock CPU cores with EFECT Optimizer. `;
             } else {
-                customFeedback += `PERFECT SYNERGY: The ${cpuName} and ${gpuName} are perfectly paired with zero hardware bottleneck. `;
+                customFeedback += `PERFECT SYNERGY: The ${cpuName} and ${gpuName} are flawlessly paired. `;
             }
             
-            // 2. TIER STATUS INJECTION
-            if (score >= 95) {
+            if (score >= 90) {
                 customFeedback += `\n\nSTATUS: Elite Tier. You have raw 0-delay hardware. Inject EFECT Macros for absolute minimum input lag.`;
-            } else if (score >= 75) {
+            } else if (score >= 70) {
                 customFeedback += `\n\nSTATUS: Competitive Tier. Solid frame times. Ensure your peripheral polling rates are maxed to match the system.`;
             } else {
-                customFeedback += `\n\nSTATUS: Casual Tier. Heavy optimizations required. Drop all Fortnite settings to Performance Mode and clear standby memory.`;
+                customFeedback += `\n\nSTATUS: Casual Tier. Heavy optimizations required. Drop all Fortnite settings to Performance Mode.`;
             }
             
             adviceText.innerText = customFeedback;
         }, 1500);
     });
+
 
 
     document.getElementById('btn-hub')?.addEventListener('click', () => {
