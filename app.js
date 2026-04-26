@@ -11,24 +11,46 @@ const systemLogs = [
 let logIndex = 0;
 
 // --- HARDWARE AUDIO & HAPTICS BYPASS ---
-const clickSound = new Audio('./click.wav'); 
-const bootSound = new Audio('./boot.mp3');   
-clickSound.volume = 0.8;
-bootSound.volume = 0.9;
+// Note: Using just the filename works best for Vercel/Spck deployments
+const clickSound = new Audio('click.wav'); 
+const bootSound = new Audio('boot.mp3');   
 
-// Tell the browser to get these files ready immediately
+clickSound.volume = 1.0;
+bootSound.volume = 1.0;
+
+// FORCE LOAD
 clickSound.load();
 bootSound.load();
 
+// This function "primes" the audio for iOS
+function unlockAudio() {
+    clickSound.play().then(() => {
+        clickSound.pause();
+        clickSound.currentTime = 0;
+    }).catch(e => console.log("Unlock failed:", e));
+    
+    bootSound.play().then(() => {
+        bootSound.pause();
+        bootSound.currentTime = 0;
+    }).catch(e => console.log("Unlock failed:", e));
+}
+
 function triggerClick() {
+    // Resetting currentTime is vital for rapid clicks
     clickSound.currentTime = 0; 
-    clickSound.play().catch((err) => console.log("Audio Blocked:", err));
+    const p = clickSound.play();
+    if (p !== undefined) {
+        p.catch(err => console.log("Play blocked:", err));
+    }
     if (navigator.vibrate) navigator.vibrate(15); 
 }
 
 function triggerBoot() {
     bootSound.currentTime = 0;
-    bootSound.play().catch((err) => console.log("Audio Blocked:", err));
+    const p = bootSound.play();
+    if (p !== undefined) {
+        p.catch(err => console.log("Play blocked:", err));
+    }
     if (navigator.vibrate) navigator.vibrate([40, 50, 40]); 
 }
 
