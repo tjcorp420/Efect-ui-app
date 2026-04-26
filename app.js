@@ -10,9 +10,9 @@ const systemLogs = [
 ];
 let logIndex = 0;
 
-// --- HARDWARE AUDIO & HAPTICS BYPASS (FIXED FILE PATHS) ---
-const clickSound = new Audio('All%20other%20button%20clicks.wav'); 
-const bootSound = new Audio('Initializesound.mp3');   
+// --- HARDWARE AUDIO & HAPTICS BYPASS ---
+const clickSound = new Audio('click.wav'); 
+const bootSound = new Audio('boot.mp3');   
 clickSound.volume = 0.8;
 bootSound.volume = 0.9;
 
@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     crt.classList.add('crt-overlay');
     document.body.appendChild(crt);
 
-    // --- PERSISTENT MEMORY LOADER ---
     const savedScore = localStorage.getItem('efect_synergy_score');
     if (savedScore) {
         const cardScore = document.getElementById('card-synergy-score');
@@ -174,6 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
             typeWriter(); 
             initDiagnostics(); 
             fetchGitHubUpdates();
+            
+            // TRIGGERS THE SALES NOTIFICATION ENGINE
+            scheduleNextSale();
+
         }, 400);
     }
 
@@ -235,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MODALS ---
+    // --- MODALS & NEW DOCUMENTATION VAULT BINDINGS ---
     const setupModal = (btnId, modalId, vidId = null) => {
         document.getElementById(btnId)?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -252,27 +255,32 @@ document.addEventListener('DOMContentLoaded', () => {
     setupModal('btn-preview', 'preview-modal', 'macro-vid');
     setupModal('btn-fps-preview', 'fps-modal');
     setupModal('btn-synergy', 'synergy-modal'); 
+    setupModal('btn-docs', 'docs-modal'); 
 
-    document.getElementById('close-modal')?.addEventListener('click', () => {
-        triggerClick();
-        const pm = document.getElementById('preview-modal');
-        if (pm) pm.style.opacity = '0';
-        document.getElementById('macro-vid')?.pause();
-        setTimeout(() => { if (pm) pm.style.display = 'none'; }, 300);
+    const closeModals = ['close-modal', 'close-fps-modal', 'close-synergy-modal', 'close-docs-modal'];
+    closeModals.forEach(id => {
+        document.getElementById(id)?.addEventListener('click', (e) => {
+            triggerClick();
+            const modal = e.target.closest('.modal-overlay');
+            if (modal) {
+                modal.style.opacity = '0';
+                if(id === 'close-modal') document.getElementById('macro-vid')?.pause();
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
+            }
+        });
     });
 
-    document.getElementById('close-fps-modal')?.addEventListener('click', () => {
-        triggerClick();
-        const fm = document.getElementById('fps-modal');
-        if (fm) fm.style.opacity = '0';
-        setTimeout(() => { if (fm) fm.style.display = 'none'; }, 300);
-    });
-
-    document.getElementById('close-synergy-modal')?.addEventListener('click', () => {
-        triggerClick();
-        const sm = document.getElementById('synergy-modal');
-        if (sm) sm.style.opacity = '0';
-        setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const docContents = document.querySelectorAll('.doc-content');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            triggerClick();
+            tabBtns.forEach(b => b.classList.remove('active'));
+            docContents.forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.target).classList.add('active');
+        });
     });
 
     document.getElementById('btn-hub')?.addEventListener('click', () => {
@@ -578,7 +586,7 @@ document.addEventListener('click', e => {
     document.body.appendChild(ripple);
     setTimeout(() => ripple.remove(), 600); 
 
-    if (e.target.tagName === 'BUTTON') return;
+    if (e.target.tagName === 'BUTTON' || e.target.classList.contains('tab-btn')) return;
     
     for (let j = 0; j < 8; j++) {
         const p = document.createElement('div');
@@ -592,4 +600,51 @@ document.addEventListener('click', e => {
         p.style.setProperty('--ty', Math.sin(angle) * vel + 'px');
         setTimeout(() => p.remove(), 600);
     }
+});
+
+// --- LIVE SOCIAL PROOF / SALES ENGINE ---
+const efectProducts = [
+    "Efect Pro Elite", 
+    "Efect Macro Engine", 
+    "Efect FPS Booster", 
+    "Zero Delay Tweaks"
+];
+
+const efectLocations = [
+    "Texas, USA", "London, UK", "California, USA", "Germany", 
+    "France", "Florida, USA", "Toronto, CAN", "New York, USA", 
+    "Australia", "Brazil", "Japan", "Ohio, USA", "Sweden"
+];
+
+function triggerRandomSale() {
+    const toast = document.getElementById('sales-toast');
+    if (!toast) return;
+
+    const product = efectProducts[Math.floor(Math.random() * efectProducts.length)];
+    const location = efectLocations[Math.floor(Math.random() * efectLocations.length)];
+    const orderNum = Math.floor(Math.random() * 90000) + 10000; 
+    
+    // The Extra: Fake Routing IP appended to the order number
+    const fakeIP = `1${Math.floor(Math.random() * 9)}.${Math.floor(Math.random() * 255)}.xxx.xx`;
+
+    document.getElementById('sale-desc').innerHTML = `User from <strong>${location}</strong> secured <strong>${product}</strong> <br><span style="color:#555; font-size: 0.65rem;">[Order #${orderNum}] | ROUTE: ${fakeIP}</span>`;
+
+    toast.classList.add('show');
+    clickSound.play().catch(() => {});
+    if (navigator.vibrate) navigator.vibrate(15);
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        scheduleNextSale();
+    }, 6000); 
+}
+
+function scheduleNextSale() {
+    const nextDelay = Math.floor(Math.random() * (45000 - 15000 + 1)) + 15000;
+    setTimeout(triggerRandomSale, nextDelay);
+}
+
+document.getElementById('close-sales-toast')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('sales-toast').classList.remove('show');
 });

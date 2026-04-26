@@ -624,3 +624,182 @@ canvas#matrix-canvas {
     0% { background-position: 0 0; }
     100% { background-position: 0 100vh; }
 }
+
+/* --- DOCUMENTATION VAULT TAB STYLES --- */
+.tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+    padding-bottom: 15px;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #888;
+    border: 1px solid transparent;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.tab-btn:hover {
+    color: #00ff00;
+}
+
+.tab-btn.active {
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.doc-content {
+    display: none;
+    text-align: left;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #ccc;
+    max-height: 45vh;
+    overflow-y: auto;
+    padding-right: 15px;
+}
+
+.doc-content.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.doc-content h3 {
+    color: #00ff00;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #333;
+    padding-bottom: 5px;
+    font-size: 1rem;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+.doc-content strong {
+    color: #fff;
+}
+
+.doc-content ul {
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.doc-content li {
+    margin-bottom: 12px;
+}
+
+/* Custom Cyber Scrollbar for the Vault */
+.doc-content::-webkit-scrollbar {
+    width: 6px;
+}
+.doc-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+.doc-content::-webkit-scrollbar-thumb {
+    background: #00ff00;
+    border-radius: 4px;
+    box-shadow: 0 0 5px #00ff00;
+}
+
+/* --- LIVE SALES TOAST NOTIFICATION --- */
+#sales-toast {
+    position: fixed;
+    top: -120px; /* Hidden initially */
+    right: 20px;
+    width: 290px;
+    background: rgba(5, 5, 5, 0.95);
+    border: 1px solid rgba(0, 255, 0, 0.4);
+    border-left: 4px solid #00ff00;
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+    z-index: 100001; 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: 'Fira Code', monospace;
+    transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+    overflow: hidden; /* Contains the scanline */
+}
+
+#sales-toast.show {
+    top: 20px; /* Slides down */
+}
+
+/* Extra Laser Scanline Effect */
+#sales-toast::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+    animation: toastScan 3s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes toastScan {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+    color: #00ff00;
+    animation: pulseGlow 2s infinite alternate;
+}
+
+.toast-text h4 {
+    margin: 0 0 5px 0;
+    color: #00ff00;
+    font-size: 0.85rem;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    animation: textGlitch 4s infinite; /* Extra micro-glitch effect */
+}
+
+@keyframes textGlitch {
+    0%, 96%, 100% { opacity: 1; transform: translateX(0); }
+    97% { opacity: 0.8; transform: translateX(-2px); color: #fff; }
+    98% { opacity: 0.9; transform: translateX(2px); color: #00ff00; }
+    99% { opacity: 0.8; transform: translateX(-1px); color: #ff3333; }
+}
+
+.toast-text p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #ccc;
+    line-height: 1.5;
+    position: relative;
+    z-index: 2; /* Keeps text above the scanline */
+}
+
+.toast-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: #888;
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+}
+
+.toast-close:hover {
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
+}

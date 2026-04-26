@@ -12,11 +12,20 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=30">
 </head>
 <body>
     <div id="share-btn" class="icon-wrapper">
         <i class="fa-solid fa-arrow-up-from-bracket"></i>
+    </div>
+
+    <div id="sales-toast">
+        <span class="toast-close" id="close-sales-toast">&times;</span>
+        <div class="toast-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+        <div class="toast-text">
+            <h4 style="letter-spacing: 1px;">SECURE CHECKOUT</h4>
+            <p id="sale-desc">Incoming data...</p>
+        </div>
     </div>
 
     <form id="command-console">
@@ -188,6 +197,77 @@
         </div>
     </div>
 
+    <div id="docs-modal" class="modal-overlay">
+        <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 700px; padding: 20px;">
+            <span class="close-btn" id="close-docs-modal">&times;</span>
+            <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">DOCUMENTATION VAULT</h2>
+            
+            <div class="tab-container">
+                <button class="tab-btn active" data-target="doc-optimizer">EFECT PRO ELITE</button>
+                <button class="tab-btn" data-target="doc-macro">MACRO ENGINE</button>
+                <button class="tab-btn" data-target="doc-fps">FPS BOOSTER</button>
+            </div>
+
+            <div id="doc-optimizer" class="doc-content active">
+                <p><strong>> SYSTEM DIRECTIVE: THE ULTIMATE ZERO-DELAY ENGINE</strong><br>
+                Stop fighting your Operating System and start fighting your opponents. Efect Pro Elite is not just a standard "cleaner"—it is a precision-engineered kernel interaction layer designed to strip away every millisecond of Windows-induced latency. Built exclusively for the competitive Fortnite community, Elite transforms your standard PC into a locked 240+ FPS powerhouse.</p>
+                
+                <h3>[ CORE ENGINE MODULES ]</h3>
+                <ul>
+                    <li><strong>KERNEL-LEVEL DOMINANCE:</strong> Bypasses standard Windows I/O scheduling to force your CPU and GPU into a pure "Direct-Communication" state.</li>
+                    <li><strong>ZERO INPUT LATENCY:</strong> From 0ms keyboard buffer registration to exclusive MSI-mode interrupt processing, your builds register before the physical switch bottoms out.</li>
+                    <li><strong>PERFECT FRAME PACING:</strong> Eliminates micro-stutters. By disabling HPET and variable system ticks, the Windows Kernel syncs perfectly with the Unreal Engine heart rate.</li>
+                    <li><strong>VBS/HVCI BYPASS:</strong> Reclaims up to 15% of your raw FPS that is normally choked by background Windows security virtualization.</li>
+                    <li><strong>QoS HIT-REG:</strong> Prioritizes Fortnite weapon and movement packets directly within the network stack.</li>
+                </ul>
+
+                <h3>[ THE CYBER-ELITE UI ]</h3>
+                <p>Performance doesn't mean sacrificing aesthetics. Elite features a high-performance Glassmorphism dashboard running on 0% background overhead.</p>
+                <ul>
+                    <li><strong>Visual Calibration:</strong> Match your setup instantly with the built-in Hue Shifter.</li>
+                    <li><strong>Canvas Kill-Switch:</strong> Click to suspend all dashboard animations while you are in the lobby for absolute maximum GPU allocation.</li>
+                    <li><strong>Elite Sync System:</strong> Never manually download a patch again. The integrated GitHub Auto-Updater pushes fresh registry bypasses directly to your terminal.</li>
+                </ul>
+            </div>
+
+            <div id="doc-macro" class="doc-content">
+                <p><strong>> SYSTEM DIRECTIVE: THE MECHANICAL ADVANTAGE</strong><br>
+                Take absolute control of your mechanics. Engineered for players who demand zero latency, this lightweight utility bridges the gap between raw human reaction time and server-side execution. Stop losing walls to 0-ping players.</p>
+
+                <h3>[ EXECUTION PARAMETERS ]</h3>
+                <ul>
+                    <li><strong>ADVANCED DRAG MACRO:</strong> Master complex edits with branched drag logic.
+                        <br>- <em>HOLD MODE:</em> Taps Edit and holds Select for exactly as long as your bind is physically pressed. Vital for high-speed tunneling.
+                        <br>- <em>TAP MODE:</em> Automates the drag. Hit your bind once to trigger an Edit and a precision-timed Select-hold for pixel-perfect consistency.</li>
+                    <li><strong>FLAWLESS DOUBLE EDITS:</strong> Automate edit, select, and confirm sequences into a single keystroke. Eradicates blank edits under pressure.</li>
+                    <li><strong>INSTANT BUILD AUTO-PLACEMENT:</strong> Bypass manual left-clicks. Your piece places on the exact frame your bind registers.</li>
+                    <li><strong>SPRINT SYNC ENGINE:</strong> Maintains perfect momentum while building, automatically overriding the game's default turbo-build delays.</li>
+                </ul>
+
+                <h3>[ CALIBRATION & HARDWARE ]</h3>
+                <p>Built to scale with flagship hardware like the Logitech Superlight 2 and Apex Pro Mini.</p>
+                <ul>
+                    <li><strong>Dual-Slider Precision:</strong> Dial in your exact Engine Speed (5ms - 50ms) and Drag Duration (1ms - 500ms).</li>
+                    <li><strong>The Keyboard-First Advantage:</strong> Offload complex multi-key combos to your fastest mechanical switches to maintain absolute mouse sensor stability for aim tracking.</li>
+                    <li><strong>Secure Kernel Link:</strong> Operates safely in the background to bypass anti-cheat flags. Includes a dedicated Emergency Kill Switch.</li>
+                </ul>
+            </div>
+
+            <div id="doc-fps" class="doc-content">
+                <p><strong>> SYSTEM DIRECTIVE: RAW HARDWARE OVERRIDE</strong><br>
+                Most "PC Tweaks" just change your power plan. EFECT PRO rewires how your hardware talks to the game engine.</p>
+
+                <h3>[ OVERCLOCKING & STABILITY ]</h3>
+                <ul>
+                    <li><strong>MAXIMIZE FPS:</strong> Forces the CPU and GPU to ignore Windows power-saving states, unlocking raw, hidden frames in titles like Fortnite and Valorant.</li>
+                    <li><strong>MINIMIZE INPUT LAG:</strong> The "Zero-Delay" engine aggressively reduces the digital travel time between your peripheral click and the on-screen reaction.</li>
+                    <li><strong>NETWORK STABILIZATION:</strong> Disables Nagle's Algorithm and eradicates Windows Network Throttling for a perfectly smooth, spike-free server connection.</li>
+                    <li><strong>GHOST-STATE UPDATER:</strong> Runs silently. The integrated Auto-Updater ensures a random Windows Update never breaks your custom tweaks.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="galaxy-wrapper">
         <div class="galaxy-bg"></div>
         <div class="galaxy-stars-1"></div>
@@ -252,6 +332,16 @@
                 <button id="btn-synergy" class="neon-btn" style="background: #00ff00; color: #000; text-shadow: none;">LAUNCH ANALYZER</button>
             </div>
 
+            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-book-journal-whills"></i></div>
+                    <span class="status online" style="color: #00ffff; border-color: #00ffff; background: rgba(0,255,255,0.1);"><span class="dot" style="background: #00ffff; box-shadow: 0 0 5px #00ffff;"></span> ACCESSIBLE</span>
+                </div>
+                <h2 style="color: #00ffff; text-shadow: 0 0 10px rgba(0,255,255,0.5);">Efect Documentation</h2>
+                <p>Official setup guides, core engine modules, and technical readmes for the software suite.</p>
+                <button id="btn-docs" class="neon-btn" style="color: #00ffff; border-color: #00ffff; animation: none;">OPEN VAULT</button>
+            </div>
+
             <div id="hw-monitor-card" class="glass-card locked" data-tilt>
                 <div class="card-header">
                     <div class="icon-wrapper"><i class="fa-solid fa-server"></i></div>
@@ -261,6 +351,7 @@
                 <p>Real-time telemetry and core-locking utility for ultimate system stability.</p>
                 <button id="btn-hw-monitor" class="neon-btn disabled" disabled>SYSTEM LOCKED</button>
             </div>
+
         </div>
     </div>
 
