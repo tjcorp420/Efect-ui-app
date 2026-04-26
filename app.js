@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- COMMAND CONSOLE LOGIC ---
+        // --- COMMAND CONSOLE LOGIC ---
     const consoleUI = document.getElementById('command-console');
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
@@ -181,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (consoleUI && cmdInput) {
         document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
         document.addEventListener('touchend', e => {
-            if (startY < 80 && e.changedTouches[0].clientY > startY + 60) {
+            // FIX: Expanded the grab zone from 80px to 250px so you don't fight the iPhone notch
+            if (startY < 250 && e.changedTouches[0].clientY > startY + 40) {
                 consoleUI.style.top = '0';
                 cmdInput.focus();
             }
@@ -206,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cmdInput.blur();
         });
     }
+
 
     // --- MODALS ---
     const setupModal = (btnId, modalId, vidId = null) => {
