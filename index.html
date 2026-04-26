@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icon.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=17">
+    <link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
     <div id="share-btn" class="icon-wrapper">
@@ -93,6 +93,48 @@
         </div>
     </div>
 
+    <div id="synergy-modal" class="modal-overlay">
+        <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 500px;">
+            <span class="close-btn" id="close-synergy-modal">&times;</span>
+            <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">Hardware Analyzer</h2>
+            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Input your current rig to calculate synergy and latency bottlenecks.</p>
+            
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="color: #00ff00; font-size: 0.8rem;">GPU TIER:</label>
+                <select id="syn-gpu" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                    <option value="50">Entry Level (GTX 1660 / RTX 3050)</option>
+                    <option value="75">Mid Range (RTX 3060 / RX 6600)</option>
+                    <option value="95" selected>High End (RTX 4060 Ti / RTX 3080)</option>
+                    <option value="100">Enthusiast (RTX 4090 / RX 7900 XTX)</option>
+                </select>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="color: #00ff00; font-size: 0.8rem;">CPU TIER:</label>
+                <select id="syn-cpu" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                    <option value="40">Older Gen (i5-10400 / Ryzen 3600)</option>
+                    <option value="70">Current Mid (i5-12400 / Ryzen 5600)</option>
+                    <option value="95" selected>Modern High (i5-14600K / Ryzen 7800X3D)</option>
+                </select>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label style="color: #00ff00; font-size: 0.8rem;">PERIPHERALS:</label>
+                <select id="syn-per" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
+                    <option value="50">Standard (Standard Mech / 1000Hz Mouse)</option>
+                    <option value="100" selected>Pro Esports (Apex Pro Mini / G Pro Superlight 2)</option>
+                </select>
+            </div>
+
+            <div id="syn-result" style="display: none; margin-bottom: 15px; padding: 15px; border: 1px dashed #00ff00; background: rgba(0,255,0,0.1);">
+                <h3 style="margin: 0; color: #fff;">SYNERGY SCORE: <span id="syn-score-text" style="color: #00ff00; text-shadow: 0 0 10px #00ff00;">--</span>/100</h3>
+                <p id="syn-advice" style="color: #aaa; font-size: 0.8rem; margin: 10px 0 0 0;"></p>
+            </div>
+            
+            <button id="run-synergy-btn" class="neon-btn" style="width: 100%;">RUN DIAGNOSTIC</button>
+        </div>
+    </div>
+
     <div class="galaxy-wrapper">
         <div class="galaxy-bg"></div>
         <div class="galaxy-stars-1"></div>
@@ -146,48 +188,28 @@
                 <button id="btn-maps" class="neon-btn">View Maps</button>
             </div>
 
-                <div id="synergy-modal" class="modal-overlay">
-        <div class="modal-content glass-card" style="border-color: #00ff00; width: 95%; max-width: 500px;">
-            <span class="close-btn" id="close-synergy-modal">&times;</span>
-            <h2 style="color: #00ff00; margin-top: 0; text-shadow: 0 0 10px #00ff00;">Hardware Analyzer</h2>
-            <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 1.5rem;">Input your current rig to calculate synergy and latency bottlenecks.</p>
-            
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">GPU TIER:</label>
-                <select id="syn-gpu" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="50">Entry Level (GTX 1660 / RTX 3050)</option>
-                    <option value="75">Mid Range (RTX 3060 / RX 6600)</option>
-                    <option value="95">High End (RTX 4060 Ti / RTX 3080)</option>
-                    <option value="100">Enthusiast (RTX 4090 / RX 7900 XTX)</option>
-                </select>
+            <div class="glass-card" data-tilt data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-calculator"></i></div>
+                    <span class="status online" style="color: #00ff00; border-color: #00ff00; background: rgba(0,255,0,0.1);"><span class="dot"></span> LIVE TOOL</span>
+                </div>
+                <h2>Synergy Calculator</h2>
+                <p>Analyze your hardware & settings to find your true latency potential.</p>
+                <p style="color: #00ff00; font-family: monospace; font-weight: bold; font-size: 0.9rem;">SCORE: <span id="card-synergy-score">--</span></p>
+                <button id="btn-synergy" class="neon-btn" style="background: #00ff00; color: #000; text-shadow: none;">LAUNCH ANALYZER</button>
             </div>
 
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">CPU TIER:</label>
-                <select id="syn-cpu" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="40">Older Gen (i5-10400 / Ryzen 3600)</option>
-                    <option value="70">Current Mid (i5-12400 / Ryzen 5600)</option>
-                    <option value="95">Modern High (i5-14600K / Ryzen 7800X3D)</option>
-                </select>
+            <div class="glass-card locked" data-tilt>
+                <div class="card-header">
+                    <div class="icon-wrapper"><i class="fa-solid fa-server"></i></div>
+                    <span class="status dev"><span class="dot"></span> IN DEV</span>
+                </div>
+                <h2>Efect Hardware Monitor</h2>
+                <p>Real-time telemetry and core-locking utility for ultimate system stability.</p>
+                <button class="neon-btn disabled" disabled>Locked</button>
             </div>
-
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="color: #00ff00; font-size: 0.8rem;">PERIPHERALS:</label>
-                <select id="syn-per" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00ff00; color: #fff; font-family: 'Fira Code', monospace; margin-top: 5px; outline: none;">
-                    <option value="50">Standard (Standard Mech / 1000Hz Mouse)</option>
-                    <option value="100">Pro Esports (Apex Pro Mini / G Pro Superlight 2 / Hex Controller)</option>
-                </select>
-            </div>
-
-            <div id="syn-result" style="display: none; margin-bottom: 15px; padding: 15px; border: 1px dashed #00ff00; background: rgba(0,255,0,0.1);">
-                <h3 style="margin: 0; color: #fff;">SYNERGY SCORE: <span id="syn-score-text" style="color: #00ff00; text-shadow: 0 0 10px #00ff00;">--</span>/100</h3>
-                <p id="syn-advice" style="color: #aaa; font-size: 0.8rem; margin: 10px 0 0 0;"></p>
-            </div>
-            
-            <button id="run-synergy-btn" class="neon-btn" style="width: 100%;">RUN DIAGNOSTIC</button>
         </div>
     </div>
-
 
     <div id="ticker-wrap">
         <div id="ticker-text">

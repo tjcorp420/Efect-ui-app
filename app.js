@@ -17,19 +17,18 @@ clickSound.volume = 0.8;
 bootSound.volume = 0.9;
 
 function triggerClick() {
-    clickSound.currentTime = 0; // Allows rapid spamming
+    clickSound.currentTime = 0; 
     clickSound.play().catch(() => {});
-    if (navigator.vibrate) navigator.vibrate(15); // Short mechanical snap
+    if (navigator.vibrate) navigator.vibrate(15); 
 }
 
 function triggerBoot() {
     bootSound.currentTime = 0;
     bootSound.play().catch(() => {});
-    if (navigator.vibrate) navigator.vibrate([40, 50, 40]); // Heavy double rumble
+    if (navigator.vibrate) navigator.vibrate([40, 50, 40]); 
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Apply CRT Overlay dynamically
     const crt = document.createElement('div');
     crt.classList.add('crt-overlay');
     document.body.appendChild(crt);
@@ -242,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupModal('btn-preview', 'preview-modal', 'macro-vid');
     setupModal('btn-fps-preview', 'fps-modal');
-    setupModal('btn-synergy', 'synergy-modal'); // <-- INJECTED SYNERGY TRIGGER
+    setupModal('btn-synergy', 'synergy-modal'); // WIRES UP SYNERGY BUTTON
 
     document.getElementById('close-modal')?.addEventListener('click', () => {
         triggerClick();
@@ -259,12 +258,44 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (fm) fm.style.display = 'none'; }, 300);
     });
 
-    // <-- INJECTED SYNERGY CLOSE BUTTON
     document.getElementById('close-synergy-modal')?.addEventListener('click', () => {
         triggerClick();
         const sm = document.getElementById('synergy-modal');
         if (sm) sm.style.opacity = '0';
         setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
+    });
+
+    // --- SYNERGY CALCULATION LOGIC ---
+    document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
+        triggerClick();
+        const gpu = parseInt(document.getElementById('syn-gpu').value);
+        const cpu = parseInt(document.getElementById('syn-cpu').value);
+        const per = parseInt(document.getElementById('syn-per').value);
+        
+        const score = Math.floor((gpu * 0.4) + (cpu * 0.4) + (per * 0.2));
+        
+        const resultBox = document.getElementById('syn-result');
+        const scoreText = document.getElementById('syn-score-text');
+        const adviceText = document.getElementById('syn-advice');
+        const cardScore = document.getElementById('card-synergy-score'); 
+        
+        resultBox.style.display = 'block';
+        scoreText.innerText = "CALC...";
+        adviceText.innerText = "Analyzing hardware polling rates and frame times...";
+        
+        setTimeout(() => {
+            triggerClick(); 
+            scoreText.innerText = score;
+            if (cardScore) cardScore.innerText = `${score}/100`;
+            
+            if (score >= 90) {
+                adviceText.innerText = "Elite hardware detected. Capable of stable 240+ FPS. Run EFECT Macros to bypass OS input latency.";
+            } else if (score >= 70) {
+                adviceText.innerText = "Solid build. CPU might bottleneck in end-games. Use EFECT FPS Booster to lock core threads.";
+            } else {
+                adviceText.innerText = "Hardware limits detected. Recommend EFECT Optimizer and setting all Fortnite settings to Performance Mode.";
+            }
+        }, 1500);
     });
 
     document.getElementById('btn-hub')?.addEventListener('click', () => {
@@ -276,46 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerClick();
         window.open('https://fortnite.gg/creator/efect.lit', '_blank');
     });
-
-    // <-- INJECTED SYNERGY CALCULATION ENGINE
-    document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
-        triggerClick();
-        const gpu = parseInt(document.getElementById('syn-gpu').value);
-        const cpu = parseInt(document.getElementById('syn-cpu').value);
-        const per = parseInt(document.getElementById('syn-per').value);
-        
-        // Math algorithm to find bottleneck
-        const score = Math.floor((gpu * 0.4) + (cpu * 0.4) + (per * 0.2));
-        
-        const resultBox = document.getElementById('syn-result');
-        const scoreText = document.getElementById('syn-score-text');
-        const adviceText = document.getElementById('syn-advice');
-        
-        // Targets the SCORE text on the actual glass card
-        const cardScore = document.getElementById('btn-synergy')?.parentElement.querySelector('p:nth-of-type(2)'); 
-        
-        resultBox.style.display = 'block';
-        
-        // Simulating scan delay
-        scoreText.innerText = "CALC...";
-        adviceText.innerText = "Analyzing hardware polling rates and frame times...";
-        
-        setTimeout(() => {
-            triggerClick(); // Snap haptics when calculation finishes
-            scoreText.innerText = score;
-            if (cardScore) cardScore.innerHTML = `SCORE: <span style="color:#00ff00;">${score}/100</span>`;
-            
-            if (score >= 90) {
-                adviceText.innerText = "Elite hardware detected. Capable of stable 240+ FPS. Run EFECT Macros to bypass OS input latency.";
-            } else if (score >= 70) {
-                adviceText.innerText = "Solid build. CPU might bottleneck in end-games. Use EFECT FPS Booster to lock core threads.";
-            } else {
-                adviceText.innerText = "Hardware limits detected. Recommend EFECT Optimizer and setting all Fortnite settings to Performance Mode.";
-            }
-        }, 1500);
-    });
 });
-
 
 // --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
 async function fetchGitHubUpdates() {
@@ -445,7 +437,7 @@ function startTerminalLog() {
 
 // --- LIQUID RIPPLES AND PARTICLES ---
 document.addEventListener('click', e => {
-    if (e.target.tagName === 'INPUT') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION') return;
 
     const ripple = document.createElement('div');
     ripple.classList.add('ripple');
