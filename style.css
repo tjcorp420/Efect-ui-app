@@ -337,6 +337,8 @@ h1:hover, h1:active {
     width: 100%;
     animation: pulseGlow 3s infinite alternate;
     transition: all 0.3s ease;
+    
+    /* ADD THIS LINE BELOW TO UNLOCK CLICKS ON IPHONE */
     touch-action: manipulation; 
 }
 
