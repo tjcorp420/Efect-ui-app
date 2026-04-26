@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
     crt.classList.add('crt-overlay');
     document.body.appendChild(crt);
 
+    // --- PERSISTENT MEMORY LOADER ---
+    const savedScore = localStorage.getItem('efect_synergy_score');
+    if (savedScore) {
+        const cardScore = document.getElementById('card-synergy-score');
+        if (cardScore) cardScore.innerText = `${savedScore}/100`;
+    }
+
     // --- SOPHISTICATED BOOT SPLASH ---
     const initBtn = document.getElementById('init-btn');
     const splashScreen = document.getElementById('splash-screen');
@@ -190,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- COMMAND CONSOLE LOGIC ---
+    // --- COMMAND CONSOLE LOGIC (INCLUDES 420 UNLOCK) ---
     const consoleUI = document.getElementById('command-console');
     const cmdInput = document.getElementById('cmd-input');
     let startY = 0;
@@ -217,6 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
             } else if (code === 'matrix') {
                 startMatrix();
+            } else if (code === '420') {
+                triggerBoot(); 
+                unlockHardwareMonitor();
             }
             
             consoleUI.style.top = '-100px';
@@ -241,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupModal('btn-preview', 'preview-modal', 'macro-vid');
     setupModal('btn-fps-preview', 'fps-modal');
-    setupModal('btn-synergy', 'synergy-modal'); // WIRES UP SYNERGY BUTTON
+    setupModal('btn-synergy', 'synergy-modal'); 
 
     document.getElementById('close-modal')?.addEventListener('click', () => {
         triggerClick();
@@ -265,7 +275,17 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (sm) sm.style.display = 'none'; }, 300);
     });
 
-    // --- SYNERGY CALCULATION LOGIC ---
+    document.getElementById('btn-hub')?.addEventListener('click', () => {
+        triggerClick();
+        window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
+    });
+
+    document.getElementById('btn-maps')?.addEventListener('click', () => {
+        triggerClick();
+        window.open('https://fortnite.gg/creator/efect.lit', '_blank');
+    });
+
+    // --- SYNERGY CALCULATION LOGIC & AUTO-SAVE ---
     document.getElementById('run-synergy-btn')?.addEventListener('click', () => {
         triggerClick();
         
@@ -273,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const cpuName = document.getElementById('syn-cpu').value.toUpperCase() || "UNKNOWN CPU";
         const perName = document.getElementById('syn-per').value.toUpperCase() || "STANDARD GEAR";
         
-        // 1. SMART PATTERN MATCHING ALGORITHM
         let gpuVal = 50;
         if (gpuName.includes('4090') || gpuName.includes('7900 XTX')) gpuVal = 100;
         else if (gpuName.includes('4080') || gpuName.includes('4070 TI') || gpuName.includes('7900 XT')) gpuVal = 95;
@@ -295,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (perName.includes('APEX PRO') || perName.includes('SUPERLIGHT') || perName.includes('WOOTING') || perName.includes('SCUF') || perName.includes('HEX')) perVal = 100;
         else if (perName.includes('PRO') || perName.includes('ESPORTS')) perVal = 85;
         
-        // 2. FINAL MATH
         const score = Math.floor((gpuVal * 0.45) + (cpuVal * 0.40) + (perVal * 0.15));
         
         const resultBox = document.getElementById('syn-result');
@@ -310,6 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             triggerClick(); 
             scoreText.innerText = score;
+            
+            // Save to memory
+            localStorage.setItem('efect_synergy_score', score);
             if (cardScore) cardScore.innerText = `${score}/100`;
             
             let customFeedback = "";
@@ -334,18 +355,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1500);
     });
 
+    // --- HARDWARE MONITOR JAILBREAK & TELEMETRY ENGINE ---
+    function unlockHardwareMonitor() {
+        const hwCard = document.getElementById('hw-monitor-card');
+        const hwBtn = document.getElementById('btn-hw-monitor');
+        const hwBadge = document.getElementById('hw-status-badge');
+        
+        if (hwCard && hwBtn && hwBadge) {
+            hwCard.classList.remove('locked');
+            hwBadge.className = 'status online';
+            hwBadge.innerHTML = '<span class="dot"></span> ONLINE';
+            hwBadge.style.color = '#00ff00';
+            hwBadge.style.borderColor = '#00ff00';
+            hwBadge.style.background = 'rgba(0,255,0,0.1)';
+            
+            hwBtn.classList.remove('disabled');
+            hwBtn.removeAttribute('disabled');
+            hwBtn.innerText = 'OPEN TELEMETRY';
+            
+            localStorage.setItem('efect_monitor_unlocked', 'true');
+        }
+    }
 
+    if (localStorage.getItem('efect_monitor_unlocked') === 'true') {
+        unlockHardwareMonitor();
+    }
 
-
-    document.getElementById('btn-hub')?.addEventListener('click', () => {
+    document.getElementById('btn-hw-monitor')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (document.getElementById('btn-hw-monitor').classList.contains('disabled')) return;
+        
         triggerClick();
-        window.open('https://efectmacrosxtweaks.netlify.app/', '_blank');
+        const modal = document.getElementById('telemetry-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => modal.style.opacity = '1', 10);
+        }
     });
 
-    document.getElementById('btn-maps')?.addEventListener('click', () => {
+    document.getElementById('close-telemetry-modal')?.addEventListener('click', () => {
         triggerClick();
-        window.open('https://fortnite.gg/creator/efect.lit', '_blank');
+        const tm = document.getElementById('telemetry-modal');
+        if (tm) tm.style.opacity = '0';
+        setTimeout(() => { if (tm) tm.style.display = 'none'; }, 300);
     });
+
+    document.getElementById('btn-force-cool')?.addEventListener('click', () => {
+        triggerBoot(); 
+        document.getElementById('tel-cpu-temp').innerText = '32°C';
+        document.getElementById('tel-gpu-temp').innerText = '28°C';
+        document.getElementById('tel-cpu-temp').style.color = '#00ffff'; 
+        document.getElementById('tel-gpu-temp').style.color = '#00ffff'; 
+        setTimeout(() => {
+            document.getElementById('tel-cpu-temp').style.color = '#00ff00';
+            document.getElementById('tel-gpu-temp').style.color = '#00ff00';
+        }, 2000);
+    });
+
+    setInterval(() => {
+        const tm = document.getElementById('telemetry-modal');
+        if (tm && tm.style.opacity === '1') {
+            
+            document.getElementById('tel-cpu-temp').innerText = Math.floor(Math.random() * (65 - 40) + 40) + '°C';
+            document.getElementById('tel-cpu-load').innerText = Math.floor(Math.random() * (45 - 10) + 10) + '%';
+            document.getElementById('tel-gpu-temp').innerText = Math.floor(Math.random() * (55 - 35) + 35) + '°C';
+            document.getElementById('tel-gpu-load').innerText = Math.floor(Math.random() * (35 - 5) + 5) + '%';
+            
+            const graph = document.getElementById('ping-graph');
+            if (graph) {
+                const bar = document.createElement('div');
+                const ping = Math.floor(Math.random() * (25 - 0) + 5); 
+                
+                bar.style.width = '8px';
+                bar.style.flexShrink = '0';
+                bar.style.backgroundColor = ping > 20 ? '#ff3333' : '#00ff00'; 
+                bar.style.height = (ping * 3) + '%'; 
+                bar.style.transition = 'height 0.2s ease';
+                
+                graph.appendChild(bar);
+                
+                if (graph.children.length > 50) {
+                    graph.removeChild(graph.firstChild);
+                }
+            }
+        }
+    }, 600); 
 });
 
 // --- GITHUB API LIVE FETCH (CACHED & SAFE) ---
