@@ -4,7 +4,7 @@ body,
 html {
     margin: 0;
     padding: 0;
-    background-color: #050505;
+    background-color: #000; /* Dark base so galaxy shines through */
     color: #fff;
     font-family: 'Fira Code', monospace;
     min-height: 100vh;
@@ -100,7 +100,7 @@ html {
 .galaxy-wrapper {
     position: fixed;
     top: -20%; left: -20%; width: 140vw; height: 140vh;
-    z-index: -1;
+    z-index: 0; /* FIX: Pulled forward so iOS doesn't hide it */
     overflow: hidden;
     pointer-events: none;
     transition: transform 0.1s ease-out; 
@@ -143,6 +143,8 @@ html {
 
 /* --- MAIN UI STYLES --- */
 .container {
+    position: relative;
+    z-index: 10; /* FIX: Keeps your main cards floating above the galaxy */
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
