@@ -400,7 +400,7 @@ function triggerRandomSale() {
     const toast = document.getElementById('sales-toast');
     if (!toast) return;
     const product = efectProducts[Math.floor(Math.random() * efectProducts.length)];
-    const location = efectLocations[Math.floor(Math.random() * efectLocations.length)];
+    const location = efectLocations[Math.floor(Math.randomefectLocations.length)];
     const orderNum = Math.floor(Math.random() * 90000) + 10000; 
     document.getElementById('sale-desc').innerHTML = `User from <strong>${location}</strong> secured <strong>${product}</strong> <br>[Order #${orderNum}]`;
     toast.classList.add('show');
